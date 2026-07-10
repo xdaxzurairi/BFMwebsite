@@ -116,7 +116,7 @@ Computed client-side from completed matches for a given tournament (see `BFM.sta
 - All three images were also inlined as base64 into `app/assets-data.js` (`window.BFM_ASSETS = {logo, crest, field}`) purely so a static single-file bundler could package them — **this file is a build artifact, not a source of truth**; use the actual files in `assets/` in the real app (e.g. Next.js `public/` folder or Supabase Storage).
 
 ## Porting the schema to Supabase/Postgres
-`schema.sql` (root of this handoff) is written for **MySQL/MariaDB**. Key adjustments for Postgres/Supabase:
+**Done** — `supabase/migrations/` contains the ported Postgres schema (tables, enums, views, RLS policies), applied to the `bfmwebsite` Supabase project. `schema.sql` (root of this handoff) remains as the original **MySQL/MariaDB** reference. Key adjustments made for Postgres/Supabase:
 - `INT UNSIGNED AUTO_INCREMENT` → `bigint generated always as identity` (or `uuid default gen_random_uuid()` if you prefer UUID PKs, which is idiomatic for Supabase + RLS).
 - `ENUM(...)` columns → Postgres native `ENUM` types (`CREATE TYPE x AS ENUM (...)`) or a `CHECK` constraint on `text`.
 - `DATETIME` → `timestamptz`; `DATE` stays `date`.
