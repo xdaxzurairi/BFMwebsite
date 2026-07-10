@@ -19,7 +19,7 @@ A companion `schema.sql` is included as a **MySQL/MariaDB** reference schema —
 ## How the prototype is organized
 ```
 design/
-  Baseball Federation Malaysia.html   -- entry point, loads React/Babel + all scripts below
+  index.html   -- entry point, loads React/Babel + all scripts below
   app/
     styles.css      -- design tokens (colors, type, shadow, radius) + all component CSS
     data.js          -- mock data layer: seed shape, i18n dictionary, CRUD functions (localStorage-backed)
@@ -104,7 +104,7 @@ Computed client-side from completed matches for a given tournament (see `BFM.sta
 - Display/headline: `'Anton'` — **only for large single-line numerals/short words** (Anton's tall glyph metrics cause overlap on wrapped multi-line text; use Archivo 900 for wrapping headlines instead — see hero implementation note above).
 - Body/UI: `'Archivo'` (400/500/600/700/800/900 loaded) — note: the "Baseball Federation Malaysia" nav wordmark specifically uses `'Anton'` per a later direct edit (single line, safe).
 - Monospace (kickers, labels, stat labels, badges): `'Space Mono'`.
-- A Google Font `Open Sans` stylesheet link was also added to `<head>` per a direct edit request (400/500/600/700) — check `Baseball Federation Malaysia.html` head for current intent before dropping it.
+- A Google Font `Open Sans` stylesheet link was also added to `<head>` per a direct edit request (400/500/600/700) — check `index.html` head for current intent before dropping it.
 
 **Shape**: `--r-sm: 6px`, `--r: 12px`, `--r-lg: 20px`, `--r-xl: 28px`. Pills/buttons are fully rounded (`border-radius: 999px`).
 **Shadow**: `--shadow-sm`, `--shadow`, `--shadow-lg` (all soft, green-tinted).
@@ -129,7 +129,7 @@ Computed client-side from completed matches for a given tournament (see `BFM.sta
   - Use a `role` column/claim (`user` / `club_manager` / `admin` / `technical_admin`) checked via a Postgres function or Supabase custom claim in JWT.
 
 ## Files
-- `design/Baseball Federation Malaysia.html` — open directly in a browser to see the working prototype (no build step; loads React/ReactDOM/Babel from a CDN + the `app/*.js(x)` files below it).
+- `design/index.html` — open directly in a browser to see the working prototype (no build step; loads React/ReactDOM/Babel from a CDN + the `app/*.js(x)` files below it). Also serves as the entry point for static hosting (e.g. Vercel with Root Directory set to `design`).
 - `design/app/*.js` / `*.jsx` — all prototype source, described above.
 - `design/assets/*` — logo/crest/photo assets.
 - `schema.sql` — MySQL/MariaDB reference schema (tables + FKs + views), **no seed/demo data** (ship empty, populate via the app's own CRUD).
