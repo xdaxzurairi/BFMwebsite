@@ -33,49 +33,70 @@ function savePrefs(p) { try { localStorage.setItem('bfm_prefs', JSON.stringify(p
 function Nav() {
   const { t, lang, setLang, role, setRole, route, navigate } = useApp();
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', h, { passive: true });
     h();
     return () => window.removeEventListener('scroll', h);
   }, []);
+  useEffect(() => { setOpen(false); }, [route.name]);
   const onHero = route.name === 'home' && !scrolled;
   const links = [
     ['clubs', t('nav.clubs')], ['players', t('nav.players')], ['tournaments', t('nav.tournaments')],
     ['standings', t('nav.standings')], ['matches', t('nav.matches')], ['news', t('nav.news')],
   ];
+  const go = (name, params) => { navigate(name, params); setOpen(false); };
+  const authActions = (block) => role === 'user' ? (
+    <Button size="sm" variant={onHero && !block ? 'ghost' : 'field'} className={`${onHero && !block ? 'on-dark' : ''} ${block ? 'btn-block' : ''}`} icon={I.user} onClick={() => go('signin')}>{t('nav.signin')}</Button>
+  ) : (
+    <div className={block ? 'col' : 'row center'} style={{ gap: 8 }}>
+      <Button size="sm" variant={onHero && !block ? 'ghost' : 'field'} className={`${onHero && !block ? 'on-dark' : ''} ${block ? 'btn-block' : ''}`} icon={I.grid} onClick={() => go('dashboard')}>{t('nav.dashboard')}</Button>
+      <button className={`btn btn-ghost btn-sm ${block ? 'btn-block' : 'btn-icon'}`} title={t('nav.signout')} style={onHero && !block ? { boxShadow: 'inset 0 0 0 2px oklch(1 0 0 / .3)', color: '#fff' } : {}} onClick={() => { setRole('user'); go('home'); }}><I.logout />{block && t('nav.signout')}</button>
+    </div>
+  );
   return (
     <nav className={`nav ${onHero ? 'on-hero' : ''}`}>
       <div className="wrap nav-inner">
-        <div className="nav-logo" onClick={() => navigate('home')}>
+        <div className="nav-logo" onClick={() => go('home')}>
           <div style={{ width: 44, height: 44, borderRadius: 11, background: '#fff', display: 'grid', placeItems: 'center', boxShadow: onHero ? '0 4px 14px rgba(0,0,0,.20)' : 'var(--shadow-sm)', transition: 'box-shadow .3s', flex: 'none' }}>
-            <img src={BFM_ASSETS.crest} alt="BFM" style={{ width: 32, height: 32, objectFit: 'contain' }} />
+            <img src="assets/bfm-crest.png" alt="BFM" style={{ width: 32, height: 32, objectFit: 'contain' }} />
           </div>
           <div style={{ lineHeight: 1.05 }}>
-            <div style={{ fontFamily: 'var(--display)', fontSize: 15, letterSpacing: '.03em', whiteSpace: 'nowrap', color: onHero ? 'rgba(255,255,255,0.92)' : 'rgba(0,0,0,0.34)' }}>Baseball Federation Malaysia</div>
+            <div className="nav-logo-text" style={{ fontFamily: 'var(--display)', fontSize: 15, letterSpacing: '.03em', color: onHero ? 'rgba(255,255,255,0.92)' : 'rgba(0,0,0,0.34)' }}>Baseball Federation Malaysia</div>
           </div>
         </div>
         <div className="nav-links">
           {links.map(([k, label]) => (
-            <div key={k} className={`nav-link ${route.name === k ? 'active' : ''}`} onClick={() => navigate(k)}>{label}</div>
+            <div key={k} className={`nav-link ${route.name === k ? 'active' : ''}`} onClick={() => go(k)}>{label}</div>
           ))}
         </div>
         <div className="spacer" />
-        <div className="row center" style={{ gap: 12 }}>
+        <div className="nav-actions row center" style={{ gap: 12 }}>
           <div className="lang-toggle">
             <button className={lang === 0 ? 'active' : ''} onClick={() => setLang(0)}>BM</button>
             <button className={lang === 1 ? 'active' : ''} onClick={() => setLang(1)}>EN</button>
           </div>
-          {role === 'user' ? (
-            <Button size="sm" variant={onHero ? 'ghost' : 'field'} className={onHero ? 'on-dark' : ''} icon={I.user} onClick={() => navigate('signin')}>{t('nav.signin')}</Button>
-          ) : (
-            <div className="row center" style={{ gap: 8 }}>
-              <Button size="sm" variant={onHero ? 'ghost' : 'field'} className={onHero ? 'on-dark' : ''} icon={I.grid} onClick={() => navigate('dashboard')}>{t('nav.dashboard')}</Button>
-              <button className="btn btn-ghost btn-icon btn-sm" title={t('nav.signout')} style={onHero ? { boxShadow: 'inset 0 0 0 2px oklch(1 0 0 / .3)', color: '#fff' } : {}} onClick={() => { setRole('user'); navigate('home'); }}><I.logout /></button>
-            </div>
-          )}
+          {authActions(false)}
         </div>
+        <button className="nav-burger" aria-label={open ? 'Close menu' : 'Open menu'} onClick={() => setOpen((o) => !o)}>
+          {open ? <I.x /> : <I.menu />}
+        </button>
       </div>
+      {open && (
+        <div className="nav-mobile-panel">
+          <div className="nav-links-mobile">
+            {links.map(([k, label]) => (
+              <div key={k} className={`nav-link-mobile ${route.name === k ? 'active' : ''}`} onClick={() => go(k)}>{label}</div>
+            ))}
+          </div>
+          <div className="lang-toggle" style={{ margin: '14px 0' }}>
+            <button className={lang === 0 ? 'active' : ''} onClick={() => setLang(0)}>BM</button>
+            <button className={lang === 1 ? 'active' : ''} onClick={() => setLang(1)}>EN</button>
+          </div>
+          {authActions(true)}
+        </div>
+      )}
     </nav>
   );
 }
@@ -92,7 +113,7 @@ function SignIn() {
     <div style={{ minHeight: 'calc(100vh - var(--nav-h))', display: 'grid', placeItems: 'center', padding: '60px 20px', background: 'var(--sand)' }}>
       <div style={{ maxWidth: 760, width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: 36 }}>
-          <img src={BFM_ASSETS.crest} alt="BFM" style={{ width: 64, height: 64, objectFit: 'contain', margin: '0 auto 18px' }} />
+          <img src="assets/bfm-crest.png" alt="BFM" style={{ width: 64, height: 64, objectFit: 'contain', margin: '0 auto 18px' }} />
           <div className="kicker" style={{ justifyContent: 'center', marginBottom: 14 }}>{t('signin.title')}</div>
           <h1 className="h-lg">{lang === 0 ? 'Pilih peranan anda' : 'Choose your role'}</h1>
           <p className="muted" style={{ fontSize: 16, marginTop: 10, maxWidth: 460, marginInline: 'auto' }}>{t('signin.sub')}</p>
@@ -124,10 +145,10 @@ function Footer() {
   return (
     <footer style={{ background: 'var(--ink)', color: '#fff', paddingTop: 64 }}>
       <div className="wrap">
-        <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr 1fr', gap: 32, paddingBottom: 48 }}>
+        <div className="footer-grid" style={{ display: 'grid', paddingBottom: 48 }}>
           <div>
             <div className="row center" style={{ gap: 11, marginBottom: 16 }}>
-              <div style={{ width: 46, height: 46, borderRadius: 12, background: '#fff', display: 'grid', placeItems: 'center' }}><img src={BFM_ASSETS.crest} alt="BFM" style={{ width: 34, height: 34, objectFit: 'contain' }} /></div>
+              <div style={{ width: 46, height: 46, borderRadius: 12, background: '#fff', display: 'grid', placeItems: 'center' }}><img src="assets/bfm-crest.png" alt="BFM" style={{ width: 34, height: 34, objectFit: 'contain' }} /></div>
               <div>
                 <div style={{ fontFamily: 'var(--display)', fontSize: 24, lineHeight: 1 }}>BFM</div>
                 <div style={{ fontFamily: 'var(--mono)', fontSize: 8.5, letterSpacing: '.16em', color: 'var(--field-glow)' }}>BASEBALL · MALAYSIA</div>

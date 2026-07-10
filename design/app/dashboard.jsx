@@ -10,8 +10,8 @@ function DashShell({ items, section, onSection, title, subtitle, children }) {
         <div className="kicker" style={{ marginBottom: 12 }}>{title}</div>
         <h1 className="h-lg">{subtitle}</h1>
       </div>
-      <div className="dash-layout" style={{ display: 'grid', gridTemplateColumns: '232px 1fr', gap: 30, alignItems: 'start' }}>
-        <aside className="card pad dash-side" style={{ position: 'sticky', top: 90 }}>
+      <div className="dash-layout" style={{ display: 'grid', alignItems: 'start' }}>
+        <aside className="card pad dash-side">
           <div className="side">
             {items.map((it) => (
               <div key={it.id} className={`side-item ${section === it.id ? 'active' : ''}`} onClick={() => onSection(it.id)}>
@@ -150,7 +150,7 @@ function ClubProfileForm({ club }) {
             <input type="color" value={f.color} onChange={(e) => set('color', e.target.value)} style={{ width: '100%', height: 40, borderRadius: 8, border: '1.5px solid var(--line)', cursor: 'pointer' }} />
           </div>
         </div>
-        <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="grid field-grid-2" style={{ gap: 16 }}>
           <Field label={lang === 0 ? 'Nama Kelab' : 'Club Name'}><Input value={f.club_name} onChange={(e) => set('club_name', e.target.value)} /></Field>
           <Field label={t('lbl.state')}><Select value={f.state} onChange={(e) => set('state', e.target.value)}>{states.map((s) => <option key={s}>{s}</option>)}</Select></Field>
           <Field label={t('lbl.manager')}><Input value={f.manager_name} onChange={(e) => set('manager_name', e.target.value)} /></Field>
@@ -227,7 +227,7 @@ function PlayerForm({ clubId, player, onClose }) {
   return (
     <Modal title={player ? t('cta.edit') + ' ' + (lang === 0 ? 'Pemain' : 'Player') : (lang === 0 ? 'Tambah Pemain' : 'Add Player')} onClose={onClose}
       footer={<><Button variant="ghost" onClick={onClose}>{t('cta.cancel')}</Button><Button variant="primary" icon={I.check} onClick={save}>{t('cta.save')}</Button></>}>
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid field-grid-2" style={{ gap: 16 }}>
         <Field label={lang === 0 ? 'Nama Pertama' : 'First Name'} error={err.first_name}><Input value={f.first_name} onChange={(e) => set('first_name', e.target.value)} /></Field>
         <Field label={lang === 0 ? 'Nama Akhir' : 'Last Name'} error={err.last_name}><Input value={f.last_name} onChange={(e) => set('last_name', e.target.value)} /></Field>
         <Field label={t('lbl.jersey')} error={err.jersey_number}><Input type="number" value={f.jersey_number} onChange={(e) => set('jersey_number', e.target.value)} /></Field>
@@ -296,7 +296,7 @@ function OfficialForm({ clubId, official, onClose }) {
   return (
     <Modal title={official ? t('cta.edit') : (lang === 0 ? 'Tambah Pegawai' : 'Add Official')} onClose={onClose}
       footer={<><Button variant="ghost" onClick={onClose}>{t('cta.cancel')}</Button><Button variant="primary" icon={I.check} onClick={save}>{t('cta.save')}</Button></>}>
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid field-grid-2" style={{ gap: 16 }}>
         <Field label={lang === 0 ? 'Nama Pertama' : 'First Name'} error={err.first_name}><Input value={f.first_name} onChange={(e) => set('first_name', e.target.value)} /></Field>
         <Field label={lang === 0 ? 'Nama Akhir' : 'Last Name'} error={err.last_name}><Input value={f.last_name} onChange={(e) => set('last_name', e.target.value)} /></Field>
         <Field label={t('lbl.position')} error={err.position} hint={lang === 0 ? 'cth: Jurulatih, Pengurus' : 'e.g. Coach, Manager'}><Input value={f.position} onChange={(e) => set('position', e.target.value)} /></Field>
@@ -565,7 +565,7 @@ function TournamentForm({ tn, onClose }) {
   return (
     <Modal wide title={tn ? t('cta.edit') : (lang === 0 ? 'Cipta Kejohanan' : 'Create Tournament')} onClose={onClose}
       footer={<><Button variant="ghost" onClick={onClose}>{t('cta.cancel')}</Button><Button variant="primary" icon={I.check} onClick={save}>{t('cta.save')}</Button></>}>
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid field-grid-2" style={{ gap: 16 }}>
         <Field label={lang === 0 ? 'Nama Kejohanan' : 'Tournament Name'} error={err.tournament_name}><Input value={f.tournament_name} onChange={(e) => set('tournament_name', e.target.value)} /></Field>
         <Field label={t('lbl.venue')}><Input value={f.location} onChange={(e) => set('location', e.target.value)} /></Field>
         <div style={{ gridColumn: '1 / -1' }}><Field label={lang === 0 ? 'Keterangan' : 'Description'}><Textarea value={f.description} onChange={(e) => set('description', e.target.value)} /></Field></div>
@@ -666,7 +666,7 @@ function MatchCreateForm({ onClose }) {
   return (
     <Modal title={lang === 0 ? 'Jadualkan Perlawanan' : 'Schedule Match'} onClose={onClose}
       footer={<><Button variant="ghost" onClick={onClose}>{t('cta.cancel')}</Button><Button variant="primary" icon={I.check} onClick={save}>{t('cta.save')}</Button></>}>
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid field-grid-2" style={{ gap: 16 }}>
         <div style={{ gridColumn: '1 / -1' }}><Field label={t('nav.tournaments')} error={err.tournament_id}><Select value={f.tournament_id} onChange={(e) => set('tournament_id', e.target.value)}>{BFM.db.tournaments.map((tn) => <option key={tn.tournament_id} value={tn.tournament_id}>{tn.tournament_name}</option>)}</Select></Field></div>
         <Field label={lang === 0 ? 'Pasukan Rumah' : 'Home Team'} error={err.home_team_id}><Select value={f.home_team_id} onChange={(e) => set('home_team_id', e.target.value)}><option value="">—</option>{BFM.db.clubs.map((c) => <option key={c.club_id} value={c.club_id}>{c.club_name}</option>)}</Select></Field>
         <Field label={lang === 0 ? 'Pasukan Tetamu' : 'Away Team'} error={err.away_team_id}><Select value={f.away_team_id} onChange={(e) => set('away_team_id', e.target.value)}><option value="">—</option>{BFM.db.clubs.map((c) => <option key={c.club_id} value={c.club_id}>{c.club_name}</option>)}</Select></Field>
@@ -733,7 +733,7 @@ function ClubForm({ club, onClose }) {
   return (
     <Modal title={club ? t('cta.edit') : (lang === 0 ? 'Tambah Kelab' : 'Add Club')} onClose={onClose}
       footer={<><Button variant="ghost" onClick={onClose}>{t('cta.cancel')}</Button><Button variant="primary" icon={I.check} onClick={save}>{t('cta.save')}</Button></>}>
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid field-grid-2" style={{ gap: 16 }}>
         <Field label={lang === 0 ? 'Nama Kelab' : 'Club Name'} error={err.club_name}><Input value={f.club_name} onChange={(e) => set('club_name', e.target.value)} /></Field>
         <Field label={t('lbl.state')}><Select value={f.state} onChange={(e) => set('state', e.target.value)}>{states.map((s) => <option key={s}>{s}</option>)}</Select></Field>
         <Field label={t('lbl.category')}><Select value={f.club_category} onChange={(e) => set('club_category', e.target.value)}><option value="club">Club</option><option value="school">School</option></Select></Field>
@@ -798,7 +798,7 @@ function NewsForm({ nw, onClose }) {
   return (
     <Modal wide title={nw ? t('cta.edit') : (lang === 0 ? 'Tambah Berita' : 'Add News')} onClose={onClose}
       footer={<><Button variant="ghost" onClick={onClose}>{t('cta.cancel')}</Button><Button variant="primary" icon={I.check} onClick={save}>{t('cta.save')}</Button></>}>
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid field-grid-2" style={{ gap: 16 }}>
         <Field label="Tajuk (BM)" error={err.title_bm}><Input value={f.title_bm} onChange={(e) => set('title_bm', e.target.value)} /></Field>
         <Field label="Title (EN)" error={err.title_en}><Input value={f.title_en} onChange={(e) => set('title_en', e.target.value)} /></Field>
         <Field label="Kategori (BM)"><Input value={f.cat_bm} onChange={(e) => set('cat_bm', e.target.value)} /></Field>
@@ -875,7 +875,7 @@ function PaymentForm({ onClose }) {
             {approved.map((r) => { const c = BFM.clubById(r.club_id), tn = BFM.tournamentById(r.tournament_id); return <option key={r.registration_id} value={`${r.tournament_id}:${r.club_id}`}>{c.club_name} · {tn?.tournament_name}</option>; })}
           </Select>
         </Field>
-        <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="grid field-grid-2" style={{ gap: 16 }}>
           <Field label={t('lbl.amount') + ' (RM)'} error={err.amount}><Input type="number" value={f.amount} onChange={(e) => setF((s) => ({ ...s, amount: e.target.value }))} /></Field>
           <Field label={t('lbl.method')}><Select value={f.method} onChange={(e) => setF((s) => ({ ...s, method: e.target.value }))}><option value="bank_transfer">Bank Transfer</option><option value="fpx">FPX</option><option value="cash">Cash</option><option value="cheque">Cheque</option></Select></Field>
         </div>
