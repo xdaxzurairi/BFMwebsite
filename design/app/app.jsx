@@ -168,7 +168,6 @@ function Footer() {
         <div className="seam" style={{ opacity: .5 }} />
         <div className="row between center" style={{ padding: '24px 0 40px', flexWrap: 'wrap', gap: 12 }}>
           <span style={{ color: 'oklch(1 0 0 / .5)', fontSize: 13 }}>{t('foot.rights')}</span>
-          <button className="chip" style={{ background: 'transparent', borderColor: 'oklch(1 0 0 / .2)', color: 'oklch(1 0 0 / .6)' }} onClick={() => { BFM.reset(); toast(lang === 0 ? 'Data demo ditetapkan semula.' : 'Demo data reset.'); }}>{lang === 0 ? 'Set semula data demo' : 'Reset demo data'}</button>
         </div>
       </div>
     </footer>
