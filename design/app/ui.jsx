@@ -59,6 +59,7 @@ I.pin = mkIcon(['M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z', 'M12 12a2.5 2.
 I.money = mkIcon(['M3 6h18a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z', 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z']);
 I.clock = mkIcon(['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z', 'M12 7v5l3 2']);
 I.logout = mkIcon(['M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4', 'M16 17l5-5-5-5', 'M21 12H9']);
+I.menu = mkIcon(['M4 7h16', 'M4 12h16', 'M4 17h16']);
 I.bolt = mkIconRaw([React.createElement('path', { key: 0, d: 'M13 2L3 14h7l-1 8 10-12h-7l1-8z', fill: 'currentColor', stroke: 'none' })]);
 I.baseball = mkIconRaw([
   React.createElement('circle', { key: 0, cx: 12, cy: 12, r: 9 }),

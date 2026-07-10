@@ -28,17 +28,17 @@ function HeroStadium() {
   const orbRef = useParallax(-0.12);
   return (
     <header className="hero-a" style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden', background: 'var(--field-darker)', display: 'flex', alignItems: 'center' }}>
-      <div ref={bgRef} style={{ position: 'absolute', inset: '-12% 0 0 0', backgroundImage: `url(${BFM_ASSETS.field})`, backgroundSize: 'cover', backgroundPosition: 'center 60%' }} />
+      <div ref={bgRef} style={{ position: 'absolute', inset: '-12% 0 0 0', backgroundImage: 'url(assets/field.jpg)', backgroundSize: 'cover', backgroundPosition: 'center 60%' }} />
       <div style={{ position: 'absolute', inset: 0, background:
         'linear-gradient(102deg, oklch(0.255 0.05 154 / .96) 0%, oklch(0.30 0.06 153 / .86) 40%, oklch(0.33 0.065 153 / .55) 72%, oklch(0.40 0.08 150 / .35) 100%)' }} />
       <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(115deg, transparent 0 38px, oklch(1 0 0 / .03) 38px 39px)' }} />
-      <div ref={orbRef} className="float-orb" style={{ position: 'absolute', top: '12%', right: '-4%', width: 480, height: 480, borderRadius: '50%', border: '2px solid oklch(1 0 0 / .10)', display: 'grid', placeItems: 'center' }}>
+      <div ref={orbRef} className="float-orb">
         <div style={{ width: 300, height: 300, borderRadius: '50%', border: '2px solid oklch(1 0 0 / .08)' }} />
       </div>
       <div className="wrap" style={{ position: 'relative', zIndex: 2, paddingTop: 100, paddingBottom: 60 }}>
-        <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: '1.15fr .85fr', gap: 40, alignItems: 'center' }}>
+        <div className="hero-grid" style={{ display: 'grid', gap: 40, alignItems: 'center' }}>
           <div>
-            <div className="kicker on-dark reveal in" style={{ marginBottom: 22 }}><img src={BFM_ASSETS.crest} style={{ width: 18, height: 18, objectFit: 'contain' }} />{t('hero.tag')}</div>
+            <div className="kicker on-dark reveal in" style={{ marginBottom: 22 }}><img src="assets/bfm-crest.png" style={{ width: 18, height: 18, objectFit: 'contain' }} />{t('hero.tag')}</div>
             <h1 className="h-xxl" style={{ color: '#fff', margin: '0 0 10px' }}>
               <div>{t('hero.line1')}</div>
               <div>{t('hero.line2')} <span style={{ color: 'var(--clay-bright)' }}>{t('hero.line3')}</span></div>
@@ -59,9 +59,9 @@ function HeroStadium() {
           <div className="hero-photo-col">
             <div style={{ position: 'relative' }}>
               <div style={{ aspectRatio: '4/5', borderRadius: 'var(--r-xl)', boxShadow: 'var(--shadow-lg)', border: '1px solid oklch(1 0 0 / .25)', background: 'oklch(0.99 0.006 84 / .92)', backdropFilter: 'blur(8px)', display: 'grid', placeItems: 'center', padding: '12% 14%' }}>
-                <img src={BFM_ASSETS.logo} alt="Baseball Malaysia" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <img src="assets/bfm-logo.png" alt="Baseball Malaysia" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
-              <div className="card pad float-card" style={{ position: 'absolute', left: -28, bottom: -74, width: 210, animation: 'floaty 6s ease-in-out infinite' }}>
+              <div className="card pad float-card">
                 <div className="kicker no-line" style={{ marginBottom: 6 }}>{t('hero.live')}</div>
                 <div className="row center" style={{ gap: 10 }}>
                   <span className="badge badge-live"><span className="dot" />LIVE</span>
@@ -90,8 +90,8 @@ function HeroSplit() {
   const { t, navigate } = useApp();
   const dref = useParallax(-0.08);
   return (
-    <header className="hero-b" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-      <div className="hero-b-left" style={{ background: 'var(--cream)', display: 'flex', alignItems: 'center', padding: '120px 6vw 60px' }}>
+    <header className="hero-b" style={{ display: 'grid' }}>
+      <div className="hero-b-left" style={{ background: 'var(--cream)', display: 'flex', alignItems: 'center' }}>
         <div>
           <div className="kicker" style={{ marginBottom: 22 }}>{t('hero.tag')}</div>
           <h1 className="h-xxl" style={{ margin: '0 0 18px' }}>
@@ -111,7 +111,7 @@ function HeroSplit() {
           <div style={{ position: 'absolute', inset: '18%', transform: 'rotate(45deg)', borderRadius: 16, border: '2px dashed oklch(1 0 0 / .35)' }} />
           <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
             <div style={{ width: '46%', aspectRatio: '1', borderRadius: '50%', background: '#fff', display: 'grid', placeItems: 'center', boxShadow: 'var(--shadow-lg)' }}>
-              <img src={BFM_ASSETS.crest} alt="BFM" style={{ width: '64%', height: '64%', objectFit: 'contain' }} />
+              <img src="assets/bfm-crest.png" alt="BFM" style={{ width: '64%', height: '64%', objectFit: 'contain' }} />
             </div>
           </div>
         </div>
@@ -143,13 +143,13 @@ function HeroType() {
   const marq = [...clubs, ...clubs];
   return (
     <header className="hero-c" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', color: '#fff' }}>
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${BFM_ASSETS.field})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(assets/field.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, oklch(0.30 0.06 153 / .82), oklch(0.255 0.05 154 / .9)), radial-gradient(60% 50% at 50% 40%, oklch(0.55 0.12 150 / .35), transparent 70%)' }} />
       <div className="marquee" style={{ position: 'absolute', top: '13%', left: 0, right: 0, opacity: .14 }}>
         <div className="marquee-track">{marq.map((c, i) => <span key={i} className="marquee-item" style={{ color: '#fff' }}>{c.club_name}<Diamond cls="" style={{ background: '#fff' }} /></span>)}</div>
       </div>
       <div className="wrap" style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
-        <img src={BFM_ASSETS.crest} alt="BFM" style={{ width: 72, height: 72, objectFit: 'contain', margin: '0 auto 18px', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,.3))' }} />
+        <img src="assets/bfm-crest.png" alt="BFM" style={{ width: 72, height: 72, objectFit: 'contain', margin: '0 auto 18px', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,.3))' }} />
         <div className="kicker on-dark" style={{ justifyContent: 'center', marginBottom: 24 }}>{t('hero.tag')}</div>
         <h1 style={{ fontFamily: 'var(--sans)', fontWeight: 900, fontSize: 'clamp(54px, 11vw, 170px)', lineHeight: .9, textTransform: 'uppercase', margin: 0, letterSpacing: '-.03em' }}>
           {t('hero.line1')}<br /><span style={{ WebkitTextStroke: '2px #fff', color: 'transparent' }}>{t('hero.line2')}</span> <span style={{ color: 'var(--clay-bright)' }}>{t('hero.line3')}</span>
@@ -193,7 +193,7 @@ function StatsBand() {
   return (
     <section className="section tight">
       <div className="wrap">
-        <div className="grid stats-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="grid stats-grid">
           {stats.map((s, i) => (
             <Reveal key={i} delay={i + 1} className="col" style={{ alignItems: 'flex-start' }}>
               <span className="stat-num" style={{ color: 'var(--field)' }}><Counter to={s.n} /></span>
@@ -214,7 +214,7 @@ function NextTournament() {
   if (!upcoming) return null;
   return (
     <section className="section" style={{ background: 'var(--field-darker)', color: '#fff', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${BFM_ASSETS.field})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: .14 }} />
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(assets/field.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: .14 }} />
       <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(115deg, transparent 0 44px, oklch(1 0 0 / .025) 44px 45px)' }} />
       <div className="wrap" style={{ position: 'relative' }}>
         <div className="row between center wrap-w" style={{ gap: 24, marginBottom: 40 }}>
@@ -248,7 +248,7 @@ function NewsSection() {
           <div><div className="kicker" style={{ marginBottom: 14 }}>{t('sec.news')}</div><h2 className="h-lg">{lang === 0 ? 'Apa yang terkini' : "What's happening"}</h2></div>
           <Button variant="ghost" size="sm" icon={I.arrow} iconRight onClick={() => navigate('news')}>{t('cta.viewall')}</Button>
         </div>
-        <div className="grid news-grid" style={{ gridTemplateColumns: '1.4fr 1fr 1fr' }}>
+        <div className="grid news-grid">
           {news.slice(0, 3).map((nw, i) => (
             <Reveal key={nw.id} delay={i + 1}>
               <article className="card hover" style={{ height: '100%', cursor: 'pointer' }} onClick={() => navigate('news')}>
@@ -281,7 +281,7 @@ function FeaturedClubs() {
           <div><div className="kicker" style={{ marginBottom: 14 }}>{t('sec.featured')}</div><h2 className="h-lg">{lang === 0 ? 'Kelab di seluruh negara' : 'Clubs across the nation'}</h2></div>
           <Button variant="ghost" size="sm" icon={I.arrow} iconRight onClick={() => navigate('clubs')}>{t('cta.viewall')}</Button>
         </div>
-        <div className="grid feat-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="grid feat-grid">
           {clubs.map((c, i) => {
             const n = BFM.playersOfClub(c.club_id).length;
             return (
