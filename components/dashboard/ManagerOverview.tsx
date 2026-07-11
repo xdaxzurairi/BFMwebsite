@@ -1,3 +1,5 @@
+'use client';
+
 import { Metric } from '@/components/dashboard/DashShell';
 import { ClubLogo } from '@/components/ui/ClubLogo';
 import { Button } from '@/components/ui/Button';
