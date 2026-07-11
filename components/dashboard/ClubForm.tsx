@@ -49,6 +49,11 @@ export function ClubForm({ club, lang, onClose }: { club: Club | null; lang: Lan
           <Field label={lang === 0 ? 'Warna' : 'Color'}>
             <input type="color" name="color" defaultValue={club?.color ?? '#1f6f43'} style={{ width: '100%', height: 44, borderRadius: 8, border: '1.5px solid var(--line)', cursor: 'pointer' }} />
           </Field>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <Field label={lang === 0 ? 'Logo Kelab' : 'Club Logo'} hint={lang === 0 ? 'Muat naik imej dari peranti (pilihan)' : 'Upload an image from your device (optional)'}>
+              <input type="file" name="logo_file" accept="image/*" className="input" />
+            </Field>
+          </div>
         </div>
         <div className="row" style={{ justifyContent: 'flex-end', gap: 8, marginTop: 22 }}>
           <Button type="button" variant="ghost" onClick={onClose}>

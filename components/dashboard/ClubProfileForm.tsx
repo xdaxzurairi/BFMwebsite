@@ -20,11 +20,15 @@ export function ClubProfileForm({ club, lang }: { club: Club; lang: Lang }) {
   return (
     <form action={formAction}>
       <div className="card pad">
-        <div className="row center" style={{ gap: 18, marginBottom: 24 }}>
+        <div className="row center" style={{ gap: 18, marginBottom: 24, flexWrap: 'wrap' }}>
           <ClubLogo club={club} size={64} />
           <div className="field" style={{ flex: 1, maxWidth: 160 }}>
             <label>{lang === 0 ? 'Warna Kelab' : 'Club Color'}</label>
             <input type="color" name="color" defaultValue={club.color || '#1f6f43'} style={{ width: '100%', height: 40, borderRadius: 8, border: '1.5px solid var(--line)', cursor: 'pointer' }} />
+          </div>
+          <div className="field" style={{ flex: 1, minWidth: 200 }}>
+            <label>{lang === 0 ? 'Muat Naik Logo' : 'Upload Logo'}</label>
+            <input type="file" name="logo_file" accept="image/*" className="input" />
           </div>
         </div>
         <div className="grid field-grid-2" style={{ gap: 16 }}>
