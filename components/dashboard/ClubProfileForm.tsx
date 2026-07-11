@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { useActionToast } from '@/components/ui/useActionToast';
 import { I } from '@/components/ui/icons';
 import { updateClubAction } from '@/app/actions/clubs';
+import { compressFileInput } from '@/lib/compressImage';
 import { t as translate, type Lang } from '@/lib/i18n';
 import type { Club } from '@/lib/types';
 
@@ -28,7 +29,7 @@ export function ClubProfileForm({ club, lang }: { club: Club; lang: Lang }) {
           </div>
           <div className="field" style={{ flex: 1, minWidth: 200 }}>
             <label>{lang === 0 ? 'Muat Naik Logo' : 'Upload Logo'}</label>
-            <input type="file" name="logo_file" accept="image/*" className="input" />
+            <input type="file" name="logo_file" accept="image/*" className="input" onChange={(e) => compressFileInput(e.currentTarget)} />
           </div>
         </div>
         <div className="grid field-grid-2" style={{ gap: 16 }}>
