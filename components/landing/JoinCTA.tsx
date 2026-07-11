@@ -2,8 +2,13 @@ import Link from 'next/link';
 import { Diamond } from '@/components/ui/icons';
 import { I } from '@/components/ui/icons';
 import { t as translate, type Lang } from '@/lib/i18n';
+import type { AppUser } from '@/lib/auth';
 
-export function JoinCTA({ lang }: { lang: Lang }) {
+export function JoinCTA({ lang, appUser }: { lang: Lang; appUser: AppUser | null }) {
+  if (appUser && appUser.role !== 'user') return null;
+  const href = appUser ? '/register-club' : '/sign-up';
+  const label = appUser ? translate('cta.registerclub', lang) : translate('cta.signup', lang);
+
   return (
     <section className="section">
       <div className="wrap">
@@ -15,8 +20,8 @@ export function JoinCTA({ lang }: { lang: Lang }) {
               {translate('sec.join.title', lang)}
             </h2>
             <p style={{ color: 'oklch(1 0 0 / .9)', fontSize: 19, maxWidth: 560, margin: '0 auto 30px', lineHeight: 1.5 }}>{translate('sec.join.sub', lang)}</p>
-            <Link href="/sign-up" className="btn btn-lg" style={{ background: '#fff', color: 'var(--clay-deep)' }}>
-              <I.shield /> {translate('nav.signin', lang)}
+            <Link href={href} className="btn btn-lg" style={{ background: '#fff', color: 'var(--clay-deep)' }}>
+              <I.shield /> {label}
             </Link>
           </div>
         </div>

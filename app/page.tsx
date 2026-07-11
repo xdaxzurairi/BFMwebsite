@@ -6,13 +6,21 @@ import { FeaturedClubs } from '@/components/landing/FeaturedClubs';
 import { NewsSection } from '@/components/landing/NewsSection';
 import { JoinCTA } from '@/components/landing/JoinCTA';
 import { getLang } from '@/lib/lang';
+import { getAppUser } from '@/lib/auth';
 import { getClubs, getMatches, getUpcomingTournament, getNews, getCounts, getPlayersOfClub } from '@/lib/queries';
 
 export const revalidate = 60;
 
 export default async function HomePage() {
   const lang = await getLang();
-  const [counts, clubs, matches, upcoming, news] = await Promise.all([getCounts(), getClubs(), getMatches(), getUpcomingTournament(), getNews()]);
+  const [appUser, counts, clubs, matches, upcoming, news] = await Promise.all([
+    getAppUser(),
+    getCounts(),
+    getClubs(),
+    getMatches(),
+    getUpcomingTournament(),
+    getNews(),
+  ]);
 
   const playerCounts: Record<number, number> = {};
   await Promise.all(
@@ -30,7 +38,7 @@ export default async function HomePage() {
       <NextTournament lang={lang} tournament={upcoming} />
       <FeaturedClubs lang={lang} clubs={clubs} playerCounts={playerCounts} />
       <NewsSection lang={lang} news={news} />
-      <JoinCTA lang={lang} />
+      <JoinCTA lang={lang} appUser={appUser} />
     </div>
   );
 }

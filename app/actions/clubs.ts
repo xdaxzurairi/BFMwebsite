@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import type { ActionState } from '@/lib/actionState';
 
@@ -56,6 +57,26 @@ export async function createClubAction(_prev: ActionState, formData: FormData): 
   revalidatePath('/dashboard/clubs');
   revalidatePath('/clubs');
   return null;
+}
+
+export async function registerClubAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const supabase = await createClient();
+  const logo = await resolveLogo(supabase, formData);
+  if (logo.error) return { error: logo.error };
+  const p = textPayload(formData);
+  const { error } = await supabase.rpc('register_own_club', {
+    p_club_name: p.club_name,
+    p_state: p.state,
+    p_club_category: p.club_category,
+    p_manager_name: p.manager_name,
+    p_phone: p.phone,
+    p_email: p.email,
+    p_color: p.color,
+    p_logo_url: logo.url ?? null,
+  });
+  if (error) return { error: error.message };
+  revalidatePath('/', 'layout');
+  redirect('/dashboard');
 }
 
 export async function deactivateClubAction(clubId: number) {

@@ -163,8 +163,16 @@ export const DICT = {
   'signin.sub': ['Masukkan e-mel dan kata laluan anda.', 'Enter your email and password.'],
   'signin.noaccount': ['Belum ada akaun?', "Don't have an account?"],
   'signup.title': ['Daftar Akaun', 'Create an Account'],
-  'signup.sub': ['Daftar sebagai orang awam. Hubungi Pentadbir BFM untuk akses Pengurus Kelab.', 'Sign up as the public. Contact a BFM Admin for Club Manager access.'],
+  'signup.sub': ['Daftar akaun untuk mendaftarkan kelab anda atau ikuti liga.', 'Sign up to register your club or follow the league.'],
   'signup.hasaccount': ['Sudah ada akaun?', 'Already have an account?'],
+
+  'cta.registerclub': ['Daftar Kelab', 'Register Club'],
+  'regclub.title': ['Daftar Kelab Anda', 'Register Your Club'],
+  'regclub.sub': [
+    'Isi butiran kelab anda untuk mula mengurus pemain, pegawai dan pendaftaran kejohanan.',
+    'Fill in your club details to start managing players, officials, and tournament registrations.',
+  ],
+  'regclub.done': ['Kelab anda telah didaftarkan!', 'Your club has been registered!'],
 
   'foot.tagline': [
     'Membina masa depan besbol Malaysia, satu larian pada satu masa.',
