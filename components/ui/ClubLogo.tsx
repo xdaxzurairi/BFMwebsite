@@ -4,20 +4,31 @@ export function ClubLogo({ club, size = 44 }: { club: Club; size?: number }) {
   const ring = size >= 44 ? 3 : 2;
   if (club.logo_url) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element -- arbitrary Storage-hosted URLs, no remotePatterns config needed
-      <img
-        src={club.logo_url}
-        alt={club.club_name}
+      <div
         style={{
           width: size,
           height: size,
           borderRadius: '50%',
-          objectFit: 'cover',
+          background: '#fff',
           border: `${ring}px solid #fff`,
           boxShadow: 'var(--shadow-sm)',
           flex: 'none',
+          overflow: 'hidden',
+          display: 'grid',
+          placeItems: 'center',
         }}
-      />
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary Storage-hosted URLs, no remotePatterns config needed */}
+        <img
+          src={club.logo_url}
+          alt={club.club_name}
+          style={{
+            width: '86%',
+            height: '86%',
+            objectFit: 'contain',
+          }}
+        />
+      </div>
     );
   }
   const initials = (club.club_name || '')
