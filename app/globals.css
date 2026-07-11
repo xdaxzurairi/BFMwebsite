@@ -271,6 +271,11 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; }
 .stat-num { font-family: var(--display); font-size: clamp(40px, 5vw, 72px); line-height: 1; letter-spacing: -.01em; }
 .stat-label { font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 
+/* ---------- countdown ---------- */
+.cd-wrap { display: flex; gap: 14px; }
+.cd-item { display: flex; flex-direction: column; align-items: center; min-width: 76px; }
+.cd-num { font-size: 52px; }
+
 /* ---------- modal ---------- */
 .modal-back {
   position: fixed; inset: 0; z-index: 200;
@@ -495,6 +500,10 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; }
 }
 @media (max-width: 560px) {
   .field-grid-2 { grid-template-columns: 1fr; }
+  .countdown-card { padding: 24px 20px !important; }
+  .cd-wrap { gap: 8px; }
+  .cd-item { min-width: 0; flex: 1; }
+  .cd-num { font-size: clamp(24px, 8vw, 40px); }
 }
 @media (max-width: 480px) {
   .nav-logo-text { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

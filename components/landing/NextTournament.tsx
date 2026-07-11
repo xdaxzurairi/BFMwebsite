@@ -35,7 +35,7 @@ export function NextTournament({ lang, tournament }: { lang: Lang; tournament: T
             {translate('cta.viewall', lang)} <I.arrow />
           </Link>
         </div>
-        <div className="card" style={{ background: 'oklch(1 0 0 / .05)', border: '1px solid oklch(1 0 0 / .14)', padding: '34px 38px', backdropFilter: 'blur(4px)' }}>
+        <div className="card countdown-card" style={{ background: 'oklch(1 0 0 / .05)', border: '1px solid oklch(1 0 0 / .14)', padding: '34px 38px', backdropFilter: 'blur(4px)' }}>
           <div className="stat-label" style={{ color: 'var(--field-glow)', marginBottom: 20 }}>
             {translate('sec.countdown', lang)}
           </div>
