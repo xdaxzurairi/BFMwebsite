@@ -23,10 +23,10 @@ export function Countdown({ target, lang }: { target: string; lang: Lang }) {
   ];
 
   return (
-    <div className="row" style={{ gap: 14 }}>
+    <div className="cd-wrap">
       {units.map(([v, lbl], i) => (
-        <div key={i} className="col" style={{ alignItems: 'center', minWidth: 76 }}>
-          <span className="display tnum" style={{ fontSize: 52, color: '#fff', lineHeight: 1 }}>
+        <div key={i} className="cd-item">
+          <span className="display tnum cd-num" style={{ color: '#fff', lineHeight: 1 }}>
             {String(v).padStart(2, '0')}
           </span>
           <span className="stat-label" style={{ color: 'var(--field-glow)', marginTop: 6 }}>
