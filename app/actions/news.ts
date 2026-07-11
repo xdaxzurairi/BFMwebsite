@@ -13,6 +13,7 @@ function newsPayload(formData: FormData) {
     body_bm: String(formData.get('body_bm') || ''),
     body_en: String(formData.get('body_en') || ''),
     published_date: String(formData.get('published_date') || new Date().toISOString().slice(0, 10)),
+    cover_image: String(formData.get('cover_image') || '') || null,
   };
 }
 
