@@ -34,6 +34,7 @@ export function Nav({ lang, appUser }: { lang: Lang; appUser: AppUser | null }) 
   ];
 
   const dashboardHref = appUser && (appUser.role === 'admin' || appUser.role === 'technical_admin' || appUser.role === 'club_manager') ? '/dashboard' : null;
+  const registerClubHref = appUser && appUser.role === 'user' ? '/register-club' : null;
 
   const authActions = (block: boolean) =>
     !appUser ? (
@@ -45,6 +46,11 @@ export function Nav({ lang, appUser }: { lang: Lang; appUser: AppUser | null }) 
         {dashboardHref && (
           <Button size="sm" variant={onHero && !block ? 'ghost' : 'field'} className={onHero && !block ? 'on-dark' : ''} block={block} icon={I.grid} onClick={() => router.push(dashboardHref)}>
             {translate('nav.dashboard', lang)}
+          </Button>
+        )}
+        {registerClubHref && (
+          <Button size="sm" variant={onHero && !block ? 'ghost' : 'field'} className={onHero && !block ? 'on-dark' : ''} block={block} icon={I.shield} onClick={() => router.push(registerClubHref)}>
+            {translate('cta.registerclub', lang)}
           </Button>
         )}
         <button

@@ -62,5 +62,5 @@ export default async function DashboardOverviewPage() {
     );
   }
 
-  redirect('/');
+  redirect('/register-club');
 }
