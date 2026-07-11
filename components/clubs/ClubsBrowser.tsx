@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { PageHead } from '@/components/PageHead';
-import { ClubLogo } from '@/components/ui/ClubLogo';
+import { ClubCard } from '@/components/clubs/ClubCard';
 import { Select } from '@/components/ui/Field';
 import { Empty } from '@/components/ui/Empty';
 import { I } from '@/components/ui/icons';
@@ -53,31 +52,9 @@ export function ClubsBrowser({ lang, clubs, playerCounts }: { lang: Lang; clubs:
         </div>
       </div>
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
-        {filtered.map((c) => {
-          const n = playerCounts[c.club_id] ?? 0;
-          return (
-            <Link key={c.club_id} href={`/clubs/${c.club_id}`} className="card hover" style={{ cursor: 'pointer', display: 'block' }}>
-              <div style={{ height: 76, background: c.color ?? undefined, position: 'relative' }}>
-                <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(45deg, transparent 0 15px, oklch(1 0 0 / .07) 15px 16px)' }} />
-              </div>
-              <div className="pad" style={{ marginTop: -30 }}>
-                <ClubLogo club={c} size={52} />
-                <h3 style={{ fontWeight: 800, fontSize: 17, marginTop: 12, lineHeight: 1.15 }}>{c.club_name}</h3>
-                <div className="row center" style={{ gap: 6, color: 'var(--ink-faint)', fontSize: 13, marginTop: 5 }}>
-                  <I.pin style={{ width: 14, height: 14 }} />
-                  {c.state}
-                </div>
-                <div className="tag-row" style={{ marginTop: 14 }}>
-                  <span className="badge">{c.club_category === 'school' ? (lang === 0 ? 'Sekolah' : 'School') : lang === 0 ? 'Kelab' : 'Club'}</span>
-                  <span className="badge">
-                    <I.users style={{ width: 12, height: 12 }} />
-                    {n} {translate('lbl.players', lang)}
-                  </span>
-                </div>
-              </div>
-            </Link>
-          );
-        })}
+        {filtered.map((c) => (
+          <ClubCard key={c.club_id} club={c} lang={lang} playerCount={playerCounts[c.club_id] ?? 0} />
+        ))}
       </div>
       {filtered.length === 0 && <Empty>{lang === 0 ? 'Tiada kelab dijumpai.' : 'No clubs found.'}</Empty>}
     </div>
