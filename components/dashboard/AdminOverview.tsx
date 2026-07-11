@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Metric } from '@/components/dashboard/DashShell';
 import { ClubLogo } from '@/components/ui/ClubLogo';
