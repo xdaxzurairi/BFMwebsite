@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { useActionToast } from '@/components/ui/useActionToast';
 import { I } from '@/components/ui/icons';
 import { createNewsAction, updateNewsAction } from '@/app/actions/news';
+import { compressFileInput } from '@/lib/compressImage';
 import { t as translate, type Lang } from '@/lib/i18n';
 import type { News } from '@/lib/types';
 
@@ -36,7 +37,7 @@ export function NewsForm({ nw, lang, onClose }: { nw: News | null; lang: Lang; o
           </Field>
           <div style={{ gridColumn: '1 / -1' }}>
             <Field label={lang === 0 ? 'Muat Naik Imej' : 'Upload Image'} hint={lang === 0 ? 'Pilih fail dari peranti anda' : 'Choose a photo from your device'}>
-              <input type="file" name="cover_image_file" accept="image/*" className="input" />
+              <input type="file" name="cover_image_file" accept="image/*" className="input" onChange={(e) => compressFileInput(e.currentTarget)} />
             </Field>
           </div>
           <div style={{ gridColumn: '1 / -1' }}>

@@ -5,6 +5,7 @@ import { Field, Input, Select } from '@/components/ui/Field';
 import { Button } from '@/components/ui/Button';
 import { I } from '@/components/ui/icons';
 import { registerClubAction } from '@/app/actions/clubs';
+import { compressFileInput } from '@/lib/compressImage';
 import { t as translate, type Lang } from '@/lib/i18n';
 
 const STATES = ['Kuala Lumpur', 'Selangor', 'Pulau Pinang', 'Johor', 'Sabah', 'Melaka', 'Perak', 'Sarawak', 'Negeri Sembilan', 'Kedah', 'Pahang', 'Terengganu', 'Kelantan', 'Perlis'];
@@ -50,7 +51,7 @@ export function RegisterClubForm({ lang, defaultManagerName }: { lang: Lang; def
         </Field>
         <div style={{ gridColumn: '1 / -1' }}>
           <Field label={lang === 0 ? 'Logo Kelab' : 'Club Logo'} hint={lang === 0 ? 'Muat naik imej dari peranti (pilihan)' : 'Upload an image from your device (optional)'}>
-            <input type="file" name="logo_file" accept="image/*" className="input" />
+            <input type="file" name="logo_file" accept="image/*" className="input" onChange={(e) => compressFileInput(e.currentTarget)} />
           </Field>
         </div>
       </div>
