@@ -4,7 +4,9 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import type { ActionState } from '@/lib/actionState';
 
-function clubPayload(formData: FormData) {
+type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
+
+function textPayload(formData: FormData) {
   return {
     club_name: String(formData.get('club_name') || ''),
     state: String(formData.get('state') || ''),
@@ -16,19 +18,40 @@ function clubPayload(formData: FormData) {
   };
 }
 
+async function resolveLogo(supabase: SupabaseClient, formData: FormData): Promise<{ url?: string | null; error?: string }> {
+  const file = formData.get('logo_file');
+  if (file instanceof File && file.size > 0) {
+    const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+    const path = `${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabase.storage.from('club-logos').upload(path, file, { contentType: file.type || undefined });
+    if (error) return { error: error.message };
+    const { data } = supabase.storage.from('club-logos').getPublicUrl(path);
+    return { url: data.publicUrl };
+  }
+  return {};
+}
+
 export async function updateClubAction(clubId: number, _prev: ActionState, formData: FormData): Promise<ActionState> {
   const supabase = await createClient();
-  const { error } = await supabase.from('clubs').update(clubPayload(formData)).eq('club_id', clubId);
+  const logo = await resolveLogo(supabase, formData);
+  if (logo.error) return { error: logo.error };
+  const payload: Record<string, unknown> = textPayload(formData);
+  if (logo.url) payload.logo_url = logo.url;
+  const { error } = await supabase.from('clubs').update(payload).eq('club_id', clubId);
   if (error) return { error: error.message };
   revalidatePath('/dashboard/profile');
+  revalidatePath('/dashboard/clubs');
   revalidatePath(`/clubs/${clubId}`);
   revalidatePath('/clubs');
+  revalidatePath('/');
   return null;
 }
 
 export async function createClubAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const supabase = await createClient();
-  const { error } = await supabase.from('clubs').insert(clubPayload(formData));
+  const logo = await resolveLogo(supabase, formData);
+  if (logo.error) return { error: logo.error };
+  const { error } = await supabase.from('clubs').insert({ ...textPayload(formData), logo_url: logo.url ?? null });
   if (error) return { error: error.message };
   revalidatePath('/dashboard/clubs');
   revalidatePath('/clubs');

@@ -1,6 +1,25 @@
-type Club = { club_name: string; color?: string | null };
+type Club = { club_name: string; color?: string | null; logo_url?: string | null };
 
 export function ClubLogo({ club, size = 44 }: { club: Club; size?: number }) {
+  const ring = size >= 44 ? 3 : 2;
+  if (club.logo_url) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- arbitrary Storage-hosted URLs, no remotePatterns config needed
+      <img
+        src={club.logo_url}
+        alt={club.club_name}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: '50%',
+          objectFit: 'cover',
+          border: `${ring}px solid #fff`,
+          boxShadow: 'var(--shadow-sm)',
+          flex: 'none',
+        }}
+      />
+    );
+  }
   const initials = (club.club_name || '')
     .split(' ')
     .filter(Boolean)
@@ -8,7 +27,6 @@ export function ClubLogo({ club, size = 44 }: { club: Club; size?: number }) {
     .map((w) => w[0])
     .join('')
     .toUpperCase();
-  const ring = size >= 44 ? 3 : 2;
   return (
     <div
       className="logo-badge"
