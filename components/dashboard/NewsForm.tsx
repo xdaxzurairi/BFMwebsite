@@ -31,11 +31,12 @@ export function NewsForm({ nw, lang, onClose }: { nw: News | null; lang: Lang; o
           <Field label="Category (EN)">
             <Input name="category_en" defaultValue={nw?.category_en ?? 'Announcement'} />
           </Field>
-          <div style={{ gridColumn: '1 / -1' }}>
-            <Field label={translate('lbl.date', lang)}>
-              <Input type="date" name="published_date" defaultValue={nw?.published_date ?? new Date().toISOString().slice(0, 10)} />
-            </Field>
-          </div>
+          <Field label={translate('lbl.date', lang)}>
+            <Input type="date" name="published_date" defaultValue={nw?.published_date ?? new Date().toISOString().slice(0, 10)} />
+          </Field>
+          <Field label={lang === 0 ? 'URL Imej' : 'Image URL'} hint={lang === 0 ? 'Pautan ke imej dalam talian (pilihan)' : 'Link to a hosted image (optional)'}>
+            <Input type="url" name="cover_image" defaultValue={nw?.cover_image ?? ''} placeholder="https://…" />
+          </Field>
           <div style={{ gridColumn: '1 / -1' }}>
             <Field label="Isi (BM)">
               <Textarea name="body_bm" defaultValue={nw?.body_bm} />

@@ -1,5 +1,5 @@
 import { PageHead } from '@/components/PageHead';
-import { Photo } from '@/components/ui/ClubLogo';
+import { NewsImage } from '@/components/ui/NewsImage';
 import { Empty } from '@/components/ui/Empty';
 import { getLang } from '@/lib/lang';
 import { getNews } from '@/lib/queries';
@@ -18,7 +18,7 @@ export default async function NewsPage() {
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))' }}>
         {news.map((nw) => (
           <article key={nw.news_id} className="card hover">
-            <Photo label="NEWS IMAGE" style={{ height: 170 }} />
+            <NewsImage src={nw.cover_image} style={{ height: 170 }} />
             <div className="pad">
               <div className="row center" style={{ gap: 10, marginBottom: 10 }}>
                 <span className="badge" style={{ background: 'var(--field)', color: '#fff' }}>

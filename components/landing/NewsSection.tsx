@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Reveal } from '@/components/ui/Reveal';
-import { Photo } from '@/components/ui/ClubLogo';
+import { NewsImage } from '@/components/ui/NewsImage';
 import { I } from '@/components/ui/icons';
 import { fmt } from '@/lib/format';
 import { t as translate, type Lang } from '@/lib/i18n';
@@ -26,7 +26,7 @@ export function NewsSection({ lang, news }: { lang: Lang; news: News[] }) {
           {top.map((nw, i) => (
             <Reveal key={nw.news_id} delay={i + 1}>
               <Link href="/news" className="card hover" style={{ height: '100%', display: 'block' }}>
-                <Photo label="NEWS IMAGE" style={{ height: i === 0 ? 220 : 150 }} />
+                <NewsImage src={nw.cover_image} style={{ height: i === 0 ? 220 : 150 }} />
                 <div className="pad">
                   <div className="row center" style={{ gap: 10, marginBottom: 10 }}>
                     <span className="badge" style={{ background: 'var(--field)', color: '#fff' }}>
