@@ -8,6 +8,7 @@ import { Empty } from '@/components/ui/Empty';
 import { useConfirm } from '@/components/ui/useConfirm';
 import { MatchForm } from './MatchForm';
 import { MatchCreateForm } from './MatchCreateForm';
+import { MatchStatsForm } from './MatchStatsForm';
 import { deleteMatchAction } from '@/app/actions/matches';
 import { I } from '@/components/ui/icons';
 import { fmt } from '@/lib/format';
@@ -18,6 +19,7 @@ import type { Match, Club, Tournament } from '@/lib/types';
 export function MatchesAdmin({ matches, clubs, tournaments, lang }: { matches: Match[]; clubs: Club[]; tournaments: Tournament[]; lang: Lang }) {
   const [edit, setEdit] = useState<Match | null>(null);
   const [create, setCreate] = useState(false);
+  const [stats, setStats] = useState<Match | null>(null);
   const confirm = useConfirm({ confirm: translate('cta.confirm', lang), cancel: translate('cta.cancel', lang) });
   const clubById = new Map(clubs.map((c) => [c.club_id, c]));
   const sorted = [...matches].sort((a, b) => new Date(a.match_date).getTime() - new Date(b.match_date).getTime());
@@ -61,6 +63,9 @@ export function MatchesAdmin({ matches, clubs, tournaments, lang }: { matches: M
                   </td>
                   <td>
                     <div className="row" style={{ gap: 6, justifyContent: 'flex-end' }}>
+                      <button className="btn btn-ghost btn-icon" title={translate('stats.title', lang)} aria-label={translate('stats.title', lang)} onClick={() => setStats(m)}>
+                        <I.chart />
+                      </button>
                       <button className="btn btn-ghost btn-icon" onClick={() => setEdit(m)}>
                         <I.edit />
                       </button>
@@ -77,6 +82,7 @@ export function MatchesAdmin({ matches, clubs, tournaments, lang }: { matches: M
         {matches.length === 0 && <Empty>{lang === 0 ? 'Tiada perlawanan.' : 'No matches.'}</Empty>}
       </div>
       {edit && <MatchForm m={edit} home={clubById.get(edit.home_team_id)} away={clubById.get(edit.away_team_id)} lang={lang} onClose={() => setEdit(null)} />}
+      {stats && <MatchStatsForm m={stats} home={clubById.get(stats.home_team_id)} away={clubById.get(stats.away_team_id)} lang={lang} onClose={() => setStats(null)} />}
       {create && <MatchCreateForm tournaments={tournaments} clubs={clubs} lang={lang} onClose={() => setCreate(false)} />}
       {confirm.node}
     </div>

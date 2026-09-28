@@ -560,3 +560,9 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; }
   .match-hero { padding: 22px 16px; }
   .scoreboard-label { display: none; }
 }
+
+/* ---------- Admin: player stats entry ---------- */
+.stats-entry td { padding: 8px 10px; }
+.stat-input { width: 58px; padding: 6px 8px; text-align: center; font-weight: 700; margin-left: auto; display: block; }
+.stat-input.invalid { border-color: var(--bad); color: var(--bad); }
+.stats-entry input[type='checkbox'] { width: 18px; height: 18px; accent-color: var(--field); }
