@@ -82,7 +82,16 @@ export function MatchesAdmin({ matches, clubs, tournaments, lang }: { matches: M
         {matches.length === 0 && <Empty>{lang === 0 ? 'Tiada perlawanan.' : 'No matches.'}</Empty>}
       </div>
       {edit && <MatchForm m={edit} home={clubById.get(edit.home_team_id)} away={clubById.get(edit.away_team_id)} lang={lang} onClose={() => setEdit(null)} />}
-      {stats && <MatchStatsForm m={stats} home={clubById.get(stats.home_team_id)} away={clubById.get(stats.away_team_id)} lang={lang} onClose={() => setStats(null)} />}
+      {stats && (
+        <MatchStatsForm
+          m={stats}
+          home={clubById.get(stats.home_team_id)}
+          away={clubById.get(stats.away_team_id)}
+          teams={[clubById.get(stats.away_team_id), clubById.get(stats.home_team_id)].filter((c): c is Club => !!c)}
+          lang={lang}
+          onClose={() => setStats(null)}
+        />
+      )}
       {create && <MatchCreateForm tournaments={tournaments} clubs={clubs} lang={lang} onClose={() => setCreate(false)} />}
       {confirm.node}
     </div>

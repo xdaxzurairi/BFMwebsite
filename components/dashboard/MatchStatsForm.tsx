@@ -18,7 +18,8 @@ const KEYS: Key[] = ['at_bats', 'hits', 'runs', 'rbi'];
 const blank: Entry = { played: false, at_bats: '', hits: '', runs: '', rbi: '' };
 const num = (s: string) => (s === '' ? 0 : Number(s));
 
-export function MatchStatsForm({ m, home, away, lang, onClose }: { m: Match; home?: Club; away?: Club; lang: Lang; onClose: () => void }) {
+/* `teams` limits which rosters are shown: both for admins, the manager's own club for managers. */
+export function MatchStatsForm({ m, home, away, teams, lang, onClose }: { m: Match; home?: Club; away?: Club; teams: Club[]; lang: Lang; onClose: () => void }) {
   const [players, setPlayers] = useState<Player[] | null>(null);
   const [entries, setEntries] = useState<Record<number, Entry>>({});
   const [loadError, setLoadError] = useState('');
@@ -57,16 +58,17 @@ export function MatchStatsForm({ m, home, away, lang, onClose }: { m: Match; hom
       onClose();
     });
 
-  const team = (club: Club | undefined, score: number | null) => {
-    const roster = (players ?? []).filter((p) => p.club_id === club?.club_id);
+  const team = (club: Club) => {
+    const score = club.club_id === m.home_team_id ? m.home_score : m.away_score;
+    const roster = (players ?? []).filter((p) => p.club_id === club.club_id);
     const teamLines = lines.filter((l) => roster.some((p) => p.player_id === l.player_id));
     const total = (k: Key) => teamLines.reduce((n, l) => n + l[k], 0);
     const runsOff = m.status === 'completed' && score != null && teamLines.length > 0 && total('runs') !== score;
     return (
-      <div style={{ marginBottom: 22 }}>
+      <div key={club.club_id} style={{ marginBottom: 22 }}>
         <div className="row center" style={{ gap: 10, marginBottom: 10 }}>
-          <ClubLogo club={club ?? { club_name: '?' }} size={30} />
-          <span style={{ fontWeight: 800 }}>{club?.club_name ?? '—'}</span>
+          <ClubLogo club={club} size={30} />
+          <span style={{ fontWeight: 800 }}>{club.club_name}</span>
           {m.status === 'completed' && <span className="muted">· {score}</span>}
         </div>
         {roster.length === 0 ? (
@@ -155,10 +157,7 @@ export function MatchStatsForm({ m, home, away, lang, onClose }: { m: Match; hom
       ) : !players ? (
         <p className="muted">{lang === 0 ? 'Memuatkan…' : 'Loading…'}</p>
       ) : (
-        <>
-          {team(away, m.away_score)}
-          {team(home, m.home_score)}
-        </>
+        teams.map(team)
       )}
       {badHits && (
         <p style={{ color: 'var(--bad)', fontSize: 13 }}>{translate('stats.hitsover', lang)}</p>

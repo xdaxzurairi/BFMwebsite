@@ -132,6 +132,15 @@ export const DICT = {
   'stats.runsoff': ['Jumlah larian tidak sepadan dengan skor', 'Runs total does not match the score'],
   'stats.hitsover': ['Pukulan tidak boleh melebihi AB.', 'Hits cannot be more than at-bats.'],
   'stats.lines': ['pemain direkodkan', 'players recorded'],
+  'stats.none': ['Belum direkod', 'Not entered'],
+  'stats.enter': ['Masukkan', 'Enter stats'],
+  'stats.nomatches': ['Tiada perlawanan selesai untuk kelab anda lagi.', 'Your club has no completed matches yet.'],
+  'stats.mgrhelp': [
+    'Rekod statistik pukulan pemain anda bagi setiap perlawanan. Ia dipaparkan di Pusat Perlawanan dan papan pendahulu.',
+    "Record your players' batting stats for each match. They appear in the Match Centre and on the leaderboards.",
+  ],
+  'stats.missing': ['perlawanan belum ada statistik.', 'matches still need stats.'],
+  'stats.missing1': ['perlawanan belum ada statistik.', 'match still needs stats.'],
   'lead.title': ['Pendahulu Statistik', 'Stat Leaders'],
   'lead.minab': ['Min. 10 AB untuk purata', 'Min. 10 AB for average'],
   'news.more': ['Berita Lain', 'More News'],
@@ -152,6 +161,7 @@ export const DICT = {
   'dash.allnews': ['Berita', 'News'],
   'dash.profile': ['Profil Kelab', 'Club Profile'],
   'dash.users': ['Pengguna', 'Users'],
+  'dash.stats': ['Statistik Perlawanan', 'Match Stats'],
 
   'reg.title': ['Daftar untuk Kejohanan', 'Register for Tournament'],
   'reg.pick': ['Pilih kejohanan yang dibuka', 'Choose an open tournament'],

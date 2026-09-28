@@ -8,6 +8,7 @@ export function managerNavItems(lang: Lang, counts: { players: number; officials
     { id: 'overview', href: '/dashboard', icon: I.grid, label: t('dash.overview', lang) },
     { id: 'profile', href: '/dashboard/profile', icon: I.pin, label: t('dash.profile', lang) },
     { id: 'players', href: '/dashboard/players', icon: I.users, label: t('dash.manageplayers', lang), count: counts.players },
+    { id: 'stats', href: '/dashboard/stats', icon: I.chart, label: t('dash.stats', lang) },
     { id: 'officials', href: '/dashboard/officials', icon: I.shield, label: t('dash.manageofficials', lang), count: counts.officials },
     { id: 'myregs', href: '/dashboard/registrations', icon: I.trophy, label: t('dash.myregs', lang), count: counts.regs },
   ];
