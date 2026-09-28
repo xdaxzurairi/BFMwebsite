@@ -1,4 +1,5 @@
 import { Hero } from '@/components/landing/Hero';
+import { Scoreboard } from '@/components/landing/Scoreboard';
 import { Ticker } from '@/components/landing/Ticker';
 import { StatsBand } from '@/components/landing/StatsBand';
 import { NextTournament } from '@/components/landing/NextTournament';
@@ -33,6 +34,7 @@ export default async function HomePage() {
   return (
     <div>
       <Hero lang={lang} counts={counts} />
+      <Scoreboard matches={matches} clubs={clubs} lang={lang} />
       <Ticker matches={matches} clubs={clubs} />
       <StatsBand lang={lang} counts={counts} />
       <NextTournament lang={lang} tournament={upcoming} />

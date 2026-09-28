@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { ClubLogo } from '@/components/ui/ClubLogo';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Empty } from '@/components/ui/Empty';
@@ -19,7 +20,7 @@ export function MatchList({ matches, clubs, lang }: { matches: Match[]; clubs: C
         const a = byId.get(m.away_team_id);
         const done = m.status === 'completed';
         return (
-          <div key={m.match_id} className="card pad">
+          <Link key={m.match_id} href={`/matches/${m.match_id}`} className="card pad hover" style={{ display: 'block' }}>
             <div className="row between center" style={{ marginBottom: 12 }}>
               <span className="badge">{m.round_name || m.match_number}</span>
               <span className="muted" style={{ fontSize: 13 }}>
@@ -51,7 +52,7 @@ export function MatchList({ matches, clubs, lang }: { matches: Match[]; clubs: C
                 <span style={{ fontWeight: 800 }}>{a?.club_name}</span>
               </div>
             </div>
-          </div>
+          </Link>
         );
       })}
     </div>

@@ -10,6 +10,7 @@ export function Footer({ lang }: { lang: Lang }) {
       [
         ['/tournaments', translate('nav.tournaments', lang)],
         ['/standings', translate('nav.standings', lang)],
+        ['/rankings', translate('nav.rankings', lang)],
         ['/matches', translate('nav.matches', lang)],
       ],
     ],

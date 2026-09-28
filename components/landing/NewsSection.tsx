@@ -25,7 +25,7 @@ export function NewsSection({ lang, news }: { lang: Lang; news: News[] }) {
         <div className="grid news-grid">
           {top.map((nw, i) => (
             <Reveal key={nw.news_id} delay={i + 1}>
-              <Link href="/news" className="card hover" style={{ height: '100%', display: 'block' }}>
+              <Link href={`/news/${nw.news_id}`} className="card hover" style={{ height: '100%', display: 'block' }}>
                 <NewsImage src={nw.cover_image} style={{ height: i === 0 ? 220 : 150 }} />
                 <div className="pad">
                   <div className="row center" style={{ gap: 10, marginBottom: 10 }}>
