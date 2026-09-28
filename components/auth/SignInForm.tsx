@@ -18,6 +18,9 @@ export function SignInForm({ lang }: { lang: Lang }) {
       <Field label={translate('lbl.password', lang)} error={state?.error}>
         <Input type="password" name="password" required autoComplete="current-password" />
       </Field>
+      <Link href="/forgot-password" style={{ alignSelf: 'flex-end', marginTop: -8, fontSize: 13, fontWeight: 700, color: 'var(--field)' }}>
+        {translate('forgot.link', lang)}
+      </Link>
       <Button type="submit" variant="field" size="lg" block disabled={pending}>
         {translate('cta.signin', lang)}
       </Button>
