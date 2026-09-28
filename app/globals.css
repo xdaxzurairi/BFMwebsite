@@ -566,3 +566,10 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; }
 .stat-input { width: 58px; padding: 6px 8px; text-align: center; font-weight: 700; margin-left: auto; display: block; }
 .stat-input.invalid { border-color: var(--bad); color: var(--bad); }
 .stats-entry input[type='checkbox'] { width: 18px; height: 18px; accent-color: var(--field); }
+
+/* ---------- Stats review ---------- */
+.review-note { background: oklch(0.97 0.03 27); border: 1px solid oklch(0.88 0.06 27); color: var(--ink); border-radius: var(--r-sm); padding: 10px 12px; font-size: 13px; margin-top: 14px; }
+.review-note-sm { font-size: 12px; color: var(--bad); margin-top: 4px; max-width: 220px; }
+.review-card { gap: 12px; flex-wrap: wrap; border-left: 4px solid var(--clay); }
+.linkish { background: none; border: 0; padding: 0; cursor: pointer; }
+.linkish:hover .badge { filter: brightness(.95); text-decoration: underline; }

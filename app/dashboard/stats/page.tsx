@@ -4,7 +4,7 @@ import { managerNavItems } from '@/components/dashboard/navItems';
 import { ManagerStats } from '@/components/dashboard/ManagerStats';
 import { getLang } from '@/lib/lang';
 import { getAppUser } from '@/lib/auth';
-import { getClub, getClubs, getMatches, getPlayersOfClub, getOfficialsOfClub, getRegistrationsForClub, getStatCountsForClub } from '@/lib/queries';
+import { getClub, getClubs, getMatches, getPlayersOfClub, getOfficialsOfClub, getRegistrationsForClub, getStatReviews } from '@/lib/queries';
 import { t as translate } from '@/lib/i18n';
 
 export default async function ManagerStatsPage() {
@@ -15,13 +15,13 @@ export default async function ManagerStatsPage() {
   const club = await getClub(appUser.club_id);
   if (!club) redirect('/dashboard');
 
-  const [players, officials, regs, clubs, matches, statCounts] = await Promise.all([
+  const [players, officials, regs, clubs, matches, reviews] = await Promise.all([
     getPlayersOfClub(club.club_id),
     getOfficialsOfClub(club.club_id),
     getRegistrationsForClub(club.club_id),
     getClubs(),
     getMatches(),
-    getStatCountsForClub(club.club_id),
+    getStatReviews(),
   ]);
   const ours = matches.filter((m) => (m.home_team_id === club.club_id || m.away_team_id === club.club_id) && (m.status === 'completed' || m.status === 'live'));
 
@@ -32,7 +32,7 @@ export default async function ManagerStatsPage() {
       title={`${translate('dash.myclub', lang)} · ${club.club_name}`}
       subtitle={`${translate('dash.welcome', lang)}, ${club.manager_name.trim()}`}
     >
-      <ManagerStats club={club} clubs={clubs} matches={ours} statCounts={statCounts} lang={lang} />
+      <ManagerStats club={club} clubs={clubs} matches={ours} reviews={reviews} lang={lang} />
     </DashShell>
   );
 }

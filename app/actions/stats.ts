@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { getAppUser } from '@/lib/auth';
-import type { Player, PlayerMatchStat } from '@/lib/types';
+import type { Player, PlayerMatchStat, StatReview } from '@/lib/types';
 
 export type StatLine = { player_id: number; at_bats: number; hits: number; runs: number; rbi: number };
 
@@ -28,8 +28,8 @@ async function editableClubs(matchId: number): Promise<{ error: string } | { clu
   return { error: 'You do not have permission to enter stats.' };
 }
 
-/* Rosters in scope plus any stats already recorded for them in this match. */
-export async function loadMatchStatsAction(matchId: number): Promise<{ error?: string; players?: Player[]; stats?: PlayerMatchStat[] }> {
+/* Rosters in scope plus any stats and review status already recorded for them in this match. */
+export async function loadMatchStatsAction(matchId: number): Promise<{ error?: string; players?: Player[]; stats?: PlayerMatchStat[]; reviews?: StatReview[] }> {
   const scope = await editableClubs(matchId);
   if ('error' in scope) return { error: scope.error };
   const supabase = await createClient();
@@ -40,7 +40,8 @@ export async function loadMatchStatsAction(matchId: number): Promise<{ error?: s
     .select('*')
     .eq('match_id', matchId)
     .in('player_id', roster.map((p) => p.player_id));
-  return { players: roster, stats: (stats || []) as PlayerMatchStat[] };
+  const { data: reviews } = await supabase.from('match_stat_reviews').select('*').eq('match_id', matchId).in('club_id', scope.clubIds);
+  return { players: roster, stats: (stats || []) as PlayerMatchStat[], reviews: (reviews || []) as StatReview[] };
 }
 
 /* Replaces the in-scope stat lines for this match with `lines`. New rows go in before old ones
@@ -76,6 +77,43 @@ export async function saveMatchStatsAction(matchId: number, lines: StatLine[]): 
 
   revalidatePath('/dashboard/matches');
   revalidatePath('/dashboard/stats');
+  revalidatePath(`/matches/${matchId}`);
+  revalidatePath('/players');
+  revalidatePath('/players/[id]', 'page');
+  revalidatePath('/clubs/[id]', 'page');
+  return {};
+}
+
+/* One club's submitted stats for a match, for the opposing club (or an admin) to review. */
+export async function loadStatsForReviewAction(matchId: number, clubId: number): Promise<{ error?: string; rows?: (PlayerMatchStat & { player: Player })[]; review?: StatReview }> {
+  const appUser = await getAppUser();
+  if (!appUser) return { error: 'Please sign in.' };
+  const supabase = await createClient();
+  const [{ data: players }, { data: review }] = await Promise.all([
+    supabase.from('players').select('*').eq('club_id', clubId),
+    supabase.from('match_stat_reviews').select('*').eq('match_id', matchId).eq('club_id', clubId).maybeSingle(),
+  ]);
+  const roster = (players || []) as Player[];
+  const byId = new Map(roster.map((p) => [p.player_id, p]));
+  const { data: stats } = await supabase
+    .from('player_match_stats')
+    .select('*')
+    .eq('match_id', matchId)
+    .in('player_id', roster.map((p) => p.player_id));
+  const rows = ((stats || []) as PlayerMatchStat[])
+    .map((s) => ({ ...s, player: byId.get(s.player_id)! }))
+    .sort((a, b) => a.player.jersey_number - b.player.jersey_number);
+  return { rows, review: (review as StatReview | null) ?? undefined };
+}
+
+/* Approve or dispute the other club's stats. Permission rules live in the review_match_stats() SQL function. */
+export async function reviewMatchStatsAction(matchId: number, clubId: number, approve: boolean, note: string): Promise<{ error?: string }> {
+  if (!approve && !note.trim()) return { error: 'Please say what is wrong with the stats.' };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc('review_match_stats', { p_match_id: matchId, p_club_id: clubId, p_approve: approve, p_note: note || null });
+  if (error) return { error: error.message };
+  revalidatePath('/dashboard/stats');
+  revalidatePath('/dashboard/matches');
   revalidatePath(`/matches/${matchId}`);
   revalidatePath('/players');
   revalidatePath('/players/[id]', 'page');

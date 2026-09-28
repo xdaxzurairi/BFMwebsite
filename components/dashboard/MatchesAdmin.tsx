@@ -9,17 +9,21 @@ import { useConfirm } from '@/components/ui/useConfirm';
 import { MatchForm } from './MatchForm';
 import { MatchCreateForm } from './MatchCreateForm';
 import { MatchStatsForm } from './MatchStatsForm';
+import { ReviewStatsModal } from './ReviewStatsModal';
+import { StatReviewBadge } from './StatReviewBadge';
 import { deleteMatchAction } from '@/app/actions/matches';
 import { I } from '@/components/ui/icons';
 import { fmt } from '@/lib/format';
 import { statusLbl } from '@/lib/status';
 import { t as translate, type Lang } from '@/lib/i18n';
-import type { Match, Club, Tournament } from '@/lib/types';
+import type { Match, Club, Tournament, StatReview } from '@/lib/types';
 
-export function MatchesAdmin({ matches, clubs, tournaments, lang }: { matches: Match[]; clubs: Club[]; tournaments: Tournament[]; lang: Lang }) {
+export function MatchesAdmin({ matches, clubs, tournaments, reviews, lang }: { matches: Match[]; clubs: Club[]; tournaments: Tournament[]; reviews: StatReview[]; lang: Lang }) {
   const [edit, setEdit] = useState<Match | null>(null);
   const [create, setCreate] = useState(false);
   const [stats, setStats] = useState<Match | null>(null);
+  const [reviewing, setReviewing] = useState<{ m: Match; club: Club } | null>(null);
+  const reviewOf = (matchId: number, clubId: number) => reviews.find((r) => r.match_id === matchId && r.club_id === clubId);
   const confirm = useConfirm({ confirm: translate('cta.confirm', lang), cancel: translate('cta.cancel', lang) });
   const clubById = new Map(clubs.map((c) => [c.club_id, c]));
   const sorted = [...matches].sort((a, b) => new Date(a.match_date).getTime() - new Date(b.match_date).getTime());
@@ -43,6 +47,7 @@ export function MatchesAdmin({ matches, clubs, tournaments, lang }: { matches: M
               <th>{translate('lbl.date', lang)}</th>
               <th className="num">{translate('lbl.score', lang)}</th>
               <th>{translate('lbl.status', lang)}</th>
+              <th>{translate('stats.title', lang)}</th>
               <th></th>
             </tr>
           </thead>
@@ -60,6 +65,28 @@ export function MatchesAdmin({ matches, clubs, tournaments, lang }: { matches: M
                   <td className="num">{m.status === 'completed' ? `${m.home_score} – ${m.away_score}` : '—'}</td>
                   <td>
                     <StatusBadge status={m.status} label={statusLbl(m.status, lang)} />
+                  </td>
+                  <td>
+                    <div className="col" style={{ gap: 4 }}>
+                      {[a, h].map((c) => {
+                        if (!c) return null;
+                        const r = reviewOf(m.match_id, c.club_id);
+                        return (
+                          <div key={c.club_id} className="row center" style={{ gap: 6, fontSize: 12 }}>
+                            <span className="muted" style={{ width: 90, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {c.club_name}
+                            </span>
+                            {r ? (
+                              <button className="linkish" onClick={() => setReviewing({ m, club: c })}>
+                                <StatReviewBadge review={r} lang={lang} />
+                              </button>
+                            ) : (
+                              <StatReviewBadge lang={lang} />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </td>
                   <td>
                     <div className="row" style={{ gap: 6, justifyContent: 'flex-end' }}>
@@ -88,10 +115,12 @@ export function MatchesAdmin({ matches, clubs, tournaments, lang }: { matches: M
           home={clubById.get(stats.home_team_id)}
           away={clubById.get(stats.away_team_id)}
           teams={[clubById.get(stats.away_team_id), clubById.get(stats.home_team_id)].filter((c): c is Club => !!c)}
+          isAdmin
           lang={lang}
           onClose={() => setStats(null)}
         />
       )}
+      {reviewing && <ReviewStatsModal m={reviewing.m} club={reviewing.club} lang={lang} onClose={() => setReviewing(null)} />}
       {create && <MatchCreateForm tournaments={tournaments} clubs={clubs} lang={lang} onClose={() => setCreate(false)} />}
       {confirm.node}
     </div>

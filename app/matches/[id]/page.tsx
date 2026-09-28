@@ -5,7 +5,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Empty } from '@/components/ui/Empty';
 import { I } from '@/components/ui/icons';
 import { getLang } from '@/lib/lang';
-import { getMatch, getClub, getTournament, getMatchBoxScore, getHeadToHead } from '@/lib/queries';
+import { getMatch, getClub, getTournament, getMatchBoxScore, getHeadToHead, getStatReviews } from '@/lib/queries';
 import { fmt } from '@/lib/format';
 import { statusLbl } from '@/lib/status';
 import { t as translate, type Lang } from '@/lib/i18n';
@@ -21,13 +21,21 @@ export default async function MatchCentrePage({ params }: { params: Promise<{ id
   const match = await getMatch(Number(id));
   if (!match) notFound();
 
-  const [home, away, tournament, box, h2h] = await Promise.all([
+  const [home, away, tournament, allBox, h2h, reviews] = await Promise.all([
     getClub(match.home_team_id),
     getClub(match.away_team_id),
     getTournament(match.tournament_id),
     getMatchBoxScore(match.match_id),
     getHeadToHead(match.home_team_id, match.away_team_id),
+    getStatReviews(match.match_id),
   ]);
+  // Only stats the opposing club (or an admin) approved are shown publicly.
+  const reviewOf = (clubId: number) => reviews.find((r) => r.club_id === clubId);
+  const box = allBox.filter((r) => reviewOf(r.player.club_id)?.status === 'approved');
+  const unapproved = [away, home].flatMap((c) => {
+    const r = c ? reviewOf(c.club_id) : undefined;
+    return c && r && r.status !== 'approved' ? [{ club: c, status: r.status }] : [];
+  });
   const clubById = new Map([home, away].filter((c): c is Club => !!c).map((c) => [c.club_id, c]));
   const done = match.status === 'completed';
   const homeBox = box.filter((r) => r.player.club_id === match.home_team_id);
@@ -137,6 +145,11 @@ export default async function MatchCentrePage({ params }: { params: Promise<{ id
       <h2 className="h-md" style={{ margin: '40px 0 16px' }}>
         {translate('mc.box', lang)}
       </h2>
+      {unapproved.map((u) => (
+        <p key={u.club.club_id} className="review-note" style={{ marginTop: 0, marginBottom: 12 }}>
+          <strong>{u.club.club_name}:</strong> {translate(u.status === 'disputed' ? 'review.mc.disputed' : 'review.mc.pending', lang)}
+        </p>
+      ))}
       {box.length === 0 ? (
         <Empty>{translate('mc.nobox', lang)}</Empty>
       ) : (

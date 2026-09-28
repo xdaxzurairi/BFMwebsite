@@ -7,9 +7,10 @@ import { ClubLogo } from '@/components/ui/ClubLogo';
 import { Empty } from '@/components/ui/Empty';
 import { I } from '@/components/ui/icons';
 import { toast } from '@/lib/toast';
+import { StatReviewBadge } from './StatReviewBadge';
 import { loadMatchStatsAction, saveMatchStatsAction, type StatLine } from '@/app/actions/stats';
 import { t as translate, type Lang } from '@/lib/i18n';
-import type { Match, Club, Player } from '@/lib/types';
+import type { Match, Club, Player, StatReview } from '@/lib/types';
 
 type Key = 'at_bats' | 'hits' | 'runs' | 'rbi';
 type Entry = { played: boolean } & Record<Key, string>;
@@ -19,9 +20,10 @@ const blank: Entry = { played: false, at_bats: '', hits: '', runs: '', rbi: '' }
 const num = (s: string) => (s === '' ? 0 : Number(s));
 
 /* `teams` limits which rosters are shown: both for admins, the manager's own club for managers. */
-export function MatchStatsForm({ m, home, away, teams, lang, onClose }: { m: Match; home?: Club; away?: Club; teams: Club[]; lang: Lang; onClose: () => void }) {
+export function MatchStatsForm({ m, home, away, teams, isAdmin = false, lang, onClose }: { m: Match; home?: Club; away?: Club; teams: Club[]; isAdmin?: boolean; lang: Lang; onClose: () => void }) {
   const [players, setPlayers] = useState<Player[] | null>(null);
   const [entries, setEntries] = useState<Record<number, Entry>>({});
+  const [reviews, setReviews] = useState<StatReview[]>([]);
   const [loadError, setLoadError] = useState('');
   const [saving, startSave] = useTransition();
 
@@ -33,6 +35,7 @@ export function MatchStatsForm({ m, home, away, teams, lang, onClose }: { m: Mat
         next[s.player_id] = { played: true, at_bats: String(s.at_bats), hits: String(s.hits), runs: String(s.runs), rbi: String(s.rbi) };
       }
       setEntries(next);
+      setReviews(res.reviews ?? []);
       setPlayers(res.players ?? []);
     });
   }, [m.match_id]);
@@ -63,6 +66,7 @@ export function MatchStatsForm({ m, home, away, teams, lang, onClose }: { m: Mat
     const roster = (players ?? []).filter((p) => p.club_id === club.club_id);
     const teamLines = lines.filter((l) => roster.some((p) => p.player_id === l.player_id));
     const total = (k: Key) => teamLines.reduce((n, l) => n + l[k], 0);
+    const review = reviews.find((r) => r.club_id === club.club_id);
     const runsOff = m.status === 'completed' && score != null && teamLines.length > 0 && total('runs') !== score;
     return (
       <div key={club.club_id} style={{ marginBottom: 22 }}>
@@ -70,7 +74,15 @@ export function MatchStatsForm({ m, home, away, teams, lang, onClose }: { m: Mat
           <ClubLogo club={club} size={30} />
           <span style={{ fontWeight: 800 }}>{club.club_name}</span>
           {m.status === 'completed' && <span className="muted">· {score}</span>}
+          <span style={{ marginLeft: 'auto' }}>
+            <StatReviewBadge review={review} lang={lang} />
+          </span>
         </div>
+        {review?.status === 'disputed' && review.review_note && (
+          <p className="review-note" style={{ marginTop: 0, marginBottom: 10 }}>
+            <strong>{translate('review.disputedby', lang)}:</strong> “{review.review_note}” {translate('review.resubmit', lang)}
+          </p>
+        )}
         {roster.length === 0 ? (
           <Empty>{translate('stats.noroster', lang)}</Empty>
         ) : (
@@ -151,6 +163,7 @@ export function MatchStatsForm({ m, home, away, teams, lang, onClose }: { m: Mat
     <Modal title={translate('stats.title', lang)} onClose={onClose} wide>
       <p className="muted" style={{ fontSize: 14, marginBottom: 18 }}>
         {away?.club_name} @ {home?.club_name} · {m.match_number}
+        {isAdmin && <> · {translate('review.adminnote', lang)}</>}
       </p>
       {loadError ? (
         <Empty>{loadError}</Empty>

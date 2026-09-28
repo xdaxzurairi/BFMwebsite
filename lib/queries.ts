@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import type { Club, Player, Tournament, Match, News, StandingRow, PlayerStatRow, PlayerMatchStat, Official, Registration, Payment, AppUserRow } from './types';
+import type { Club, Player, Tournament, Match, News, StandingRow, PlayerStatRow, PlayerMatchStat, StatReview, Official, Registration, Payment, AppUserRow } from './types';
 
 export async function getClubs() {
   const supabase = await createClient();
@@ -177,14 +177,10 @@ export async function getNewsItem(id: number) {
   return data as News | null;
 }
 
-/* Number of stat lines recorded per match for one club's players, keyed by match_id. */
-export async function getStatCountsForClub(clubId: number) {
+export async function getStatReviews(matchId?: number) {
   const supabase = await createClient();
-  const { data: players } = await supabase.from('players').select('player_id').eq('club_id', clubId);
-  const ids = (players || []).map((p) => p.player_id);
-  if (!ids.length) return {} as Record<number, number>;
-  const { data } = await supabase.from('player_match_stats').select('match_id').in('player_id', ids);
-  const counts: Record<number, number> = {};
-  for (const r of data || []) if (r.match_id != null) counts[r.match_id] = (counts[r.match_id] || 0) + 1;
-  return counts;
+  let q = supabase.from('match_stat_reviews').select('*');
+  if (matchId) q = q.eq('match_id', matchId);
+  const { data } = await q;
+  return (data || []) as StatReview[];
 }
