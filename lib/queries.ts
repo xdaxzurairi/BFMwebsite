@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import type { Club, Player, Tournament, Match, News, StandingRow, PlayerStatRow, Official, Registration, Payment, AppUserRow } from './types';
+import type { Club, Player, Tournament, Match, News, StandingRow, PlayerStatRow, PlayerMatchStat, StatReview, Official, Registration, Payment, AppUserRow } from './types';
 
 export async function getClubs() {
   const supabase = await createClient();
@@ -136,4 +136,51 @@ export async function getCounts() {
     matches: matches.count || 0,
     states: stateSet.size,
   };
+}
+
+export async function getMatch(id: number) {
+  const supabase = await createClient();
+  const { data } = await supabase.from('matches').select('*').eq('match_id', id).single();
+  return data as Match | null;
+}
+
+export async function getMatchBoxScore(matchId: number) {
+  const supabase = await createClient();
+  const { data: stats } = await supabase.from('player_match_stats').select('*').eq('match_id', matchId);
+  const rows = (stats || []) as PlayerMatchStat[];
+  if (!rows.length) return [];
+  const { data: players } = await supabase
+    .from('players')
+    .select('*')
+    .in('player_id', rows.map((r) => r.player_id));
+  const byId = new Map(((players || []) as Player[]).map((p) => [p.player_id, p]));
+  return rows.flatMap((r) => {
+    const player = byId.get(r.player_id);
+    return player ? [{ ...r, player }] : [];
+  });
+}
+
+export async function getHeadToHead(clubA: number, clubB: number) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('matches')
+    .select('*')
+    .eq('status', 'completed')
+    .or(`and(home_team_id.eq.${clubA},away_team_id.eq.${clubB}),and(home_team_id.eq.${clubB},away_team_id.eq.${clubA})`)
+    .order('match_date', { ascending: false });
+  return (data || []) as Match[];
+}
+
+export async function getNewsItem(id: number) {
+  const supabase = await createClient();
+  const { data } = await supabase.from('news').select('*').eq('news_id', id).single();
+  return data as News | null;
+}
+
+export async function getStatReviews(matchId?: number) {
+  const supabase = await createClient();
+  let q = supabase.from('match_stat_reviews').select('*');
+  if (matchId) q = q.eq('match_id', matchId);
+  const { data } = await q;
+  return (data || []) as StatReview[];
 }

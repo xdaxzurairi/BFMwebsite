@@ -10,6 +10,8 @@ import { fmt } from '@/lib/format';
 import { t as translate, type Lang } from '@/lib/i18n';
 import type { Club, PlayerStatRow } from '@/lib/types';
 
+const MIN_AB = 10;
+
 export function PlayersBrowser({ lang, rows, clubs }: { lang: Lang; rows: PlayerStatRow[]; clubs: Club[] }) {
   const [q, setQ] = useState('');
   const [club, setClub] = useState('');
@@ -18,6 +20,14 @@ export function PlayersBrowser({ lang, rows, clubs }: { lang: Lang; rows: Player
   const filtered = rows
     .filter((s) => (!q || `${s.first_name} ${s.last_name}`.toLowerCase().includes(q.toLowerCase())) && (!club || String(s.club_id) === club))
     .sort((a, b) => b.batting_average - a.batting_average);
+
+  const pool = rows.filter((s) => !club || String(s.club_id) === club);
+  const leaders: { key: string; label: string; value: (s: PlayerStatRow) => number; show: (s: PlayerStatRow) => string; list: PlayerStatRow[] }[] = [
+    { key: 'avg', label: translate('lbl.avg', lang), value: (s) => s.batting_average, show: (s) => fmt.avg(s.batting_average), list: pool.filter((s) => s.total_at_bats >= MIN_AB) },
+    { key: 'hits', label: translate('lbl.hits', lang), value: (s) => s.total_hits, show: (s) => String(s.total_hits), list: pool },
+    { key: 'runs', label: translate('lbl.runs', lang), value: (s) => s.total_runs, show: (s) => String(s.total_runs), list: pool },
+    { key: 'rbi', label: translate('lbl.rbi', lang), value: (s) => s.total_rbi, show: (s) => String(s.total_rbi), list: pool },
+  ];
 
   return (
     <div className="section wrap">
@@ -39,6 +49,40 @@ export function PlayersBrowser({ lang, rows, clubs }: { lang: Lang; rows: Player
             </option>
           ))}
         </Select>
+      </div>
+      <div className="row between center" style={{ marginBottom: 14 }}>
+        <h2 className="h-md">{translate('lead.title', lang)}</h2>
+        <span className="stat-label muted">{translate('lead.minab', lang)}</span>
+      </div>
+      <div className="grid leaders-grid" style={{ marginBottom: 36 }}>
+        {leaders.map((ld) => {
+          const top = [...ld.list].filter((s) => ld.value(s) > 0).sort((a, b) => ld.value(b) - ld.value(a)).slice(0, 5);
+          return (
+            <div key={ld.key} className="card pad">
+              <div className="stat-label" style={{ color: 'var(--clay)', marginBottom: 12 }}>
+                {ld.label}
+              </div>
+              {top.length === 0 && <div className="muted" style={{ fontSize: 14 }}>—</div>}
+              <ol className="leader-list">
+                {top.map((s, i) => (
+                  <li key={s.player_id}>
+                    <Link href={`/players/${s.player_id}`} className="row center" style={{ gap: 10 }}>
+                      <span className="muted tnum" style={{ width: 14, fontWeight: 800 }}>
+                        {i + 1}
+                      </span>
+                      <span style={{ flex: 1, fontWeight: i === 0 ? 800 : 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {s.first_name} {s.last_name}
+                      </span>
+                      <span className={i === 0 ? 'display' : 'tnum'} style={{ fontSize: i === 0 ? 24 : 14, fontWeight: 800 }}>
+                        {ld.show(s)}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          );
+        })}
       </div>
       <div className="card" style={{ overflowX: 'auto' }}>
         <table className="tbl">

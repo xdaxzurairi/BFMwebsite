@@ -4,19 +4,19 @@ import { adminNavItems } from '@/components/dashboard/navItems';
 import { MatchesAdmin } from '@/components/dashboard/MatchesAdmin';
 import { getLang } from '@/lib/lang';
 import { getAppUser } from '@/lib/auth';
-import { getMatches, getClubs, getTournaments, getAllRegistrations } from '@/lib/queries';
+import { getMatches, getClubs, getTournaments, getAllRegistrations, getStatReviews } from '@/lib/queries';
 
 export default async function MatchesAdminPage() {
   const lang = await getLang();
   const appUser = await getAppUser();
   if (!appUser || (appUser.role !== 'admin' && appUser.role !== 'technical_admin')) redirect('/dashboard');
 
-  const [matches, clubs, tournaments, allRegs] = await Promise.all([getMatches(), getClubs(), getTournaments(), getAllRegistrations()]);
+  const [matches, clubs, tournaments, allRegs, reviews] = await Promise.all([getMatches(), getClubs(), getTournaments(), getAllRegistrations(), getStatReviews()]);
   const pending = allRegs.filter((r) => r.status === 'pending').length;
 
   return (
     <DashShell items={adminNavItems(lang, pending)} active="matches" title={lang === 0 ? 'Konsol Pentadbir' : 'Admin Console'} subtitle={lang === 0 ? 'Kawalan penuh liga BFM' : 'Full control of the BFM league'}>
-      <MatchesAdmin matches={matches} clubs={clubs} tournaments={tournaments} lang={lang} />
+      <MatchesAdmin reviews={reviews} matches={matches} clubs={clubs} tournaments={tournaments} lang={lang} />
     </DashShell>
   );
 }

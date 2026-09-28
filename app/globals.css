@@ -510,3 +510,66 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; }
   .feat-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
 }
+
+/* ---------- Scoreboard ribbon (home) ---------- */
+.scoreboard { background: var(--paper); border-bottom: 1px solid var(--line); }
+.scoreboard-label {
+  flex: none; padding: 0 18px 0 0; margin-right: 6px; border-right: 1px solid var(--line);
+  color: var(--clay); align-self: stretch; display: flex; align-items: center;
+}
+.scoreboard-track { display: flex; overflow-x: auto; scrollbar-width: thin; flex: 1; min-width: 0; }
+.sb-card {
+  flex: none; width: 184px; padding: 12px 14px; border-right: 1px solid var(--line-soft);
+  display: flex; flex-direction: column; gap: 6px; transition: background .12s;
+}
+.sb-card:hover { background: var(--cream); }
+.sb-head { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-faint); }
+.sb-live .sb-head { color: var(--bad); font-weight: 700; }
+.sb-team { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.sb-name { flex: 1; min-width: 0; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-score { font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* ---------- Match centre ---------- */
+.match-hero { background: linear-gradient(160deg, var(--field-deep), var(--field-darker)); color: #fff; padding: 30px; }
+.match-hero .badge:not([style]) { background: oklch(1 0 0 / .14); color: #fff; }
+.box-grid { grid-template-columns: 1fr 1fr; }
+.h2h-row { padding: 10px 12px; border-radius: var(--r-sm); background: var(--cream); }
+.h2h-row:hover { background: var(--sand); }
+
+/* ---------- Rankings form ---------- */
+.form-pills { display: inline-flex; gap: 4px; }
+.form-pill {
+  width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center;
+  font-size: 11px; font-weight: 800; color: #fff;
+}
+.form-W { background: var(--ok); }
+.form-L { background: var(--bad); }
+.form-D { background: var(--ink-faint); }
+
+/* ---------- Stat leaders ---------- */
+.leaders-grid { grid-template-columns: repeat(4, 1fr); }
+.leader-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+@media (max-width: 900px) {
+  .box-grid { grid-template-columns: 1fr; }
+  .leaders-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .leaders-grid { grid-template-columns: 1fr; }
+  .match-hero { padding: 22px 16px; }
+  .scoreboard-label { display: none; }
+}
+
+/* ---------- Admin: player stats entry ---------- */
+.stats-entry td { padding: 8px 10px; }
+.stat-input { width: 58px; padding: 6px 8px; text-align: center; font-weight: 700; margin-left: auto; display: block; }
+.stat-input.invalid { border-color: var(--bad); color: var(--bad); }
+.stats-entry input[type='checkbox'] { width: 18px; height: 18px; accent-color: var(--field); }
+
+/* ---------- Stats review ---------- */
+.review-note { background: oklch(0.97 0.03 27); border: 1px solid oklch(0.88 0.06 27); color: var(--ink); border-radius: var(--r-sm); padding: 10px 12px; font-size: 13px; margin-top: 14px; }
+.review-note-sm { font-size: 12px; color: var(--bad); margin-top: 4px; max-width: 220px; }
+.review-card { gap: 12px; flex-wrap: wrap; border-left: 4px solid var(--clay); }
+.linkish { background: none; border: 0; padding: 0; cursor: pointer; }
+.linkish:hover .badge { filter: brightness(.95); text-decoration: underline; }

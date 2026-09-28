@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { PageHead } from '@/components/PageHead';
 import { NewsImage } from '@/components/ui/NewsImage';
 import { Empty } from '@/components/ui/Empty';
@@ -17,7 +18,7 @@ export default async function NewsPage() {
       <PageHead kicker={translate('nav.news', lang)} title={lang === 0 ? 'Berita & Pengumuman' : 'News & Announcements'} />
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))' }}>
         {news.map((nw) => (
-          <article key={nw.news_id} className="card hover">
+          <Link key={nw.news_id} href={`/news/${nw.news_id}`} className="card hover" style={{ display: 'block' }}>
             <NewsImage src={nw.cover_image} style={{ height: 170 }} />
             <div className="pad">
               <div className="row center" style={{ gap: 10, marginBottom: 10 }}>
@@ -29,11 +30,11 @@ export default async function NewsPage() {
                 </span>
               </div>
               <h3 style={{ fontWeight: 800, fontSize: 18, lineHeight: 1.2, marginBottom: 8 }}>{lang === 0 ? nw.title_bm : nw.title_en}</h3>
-              <p className="muted" style={{ fontSize: 14, lineHeight: 1.55 }}>
+              <p className="muted clamp-3" style={{ fontSize: 14, lineHeight: 1.55 }}>
                 {lang === 0 ? nw.body_bm : nw.body_en}
               </p>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
       {news.length === 0 && <Empty>{lang === 0 ? 'Tiada berita.' : 'No news.'}</Empty>}

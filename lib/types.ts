@@ -187,3 +187,16 @@ export type PlayerStatRow = {
   total_rbi: number;
   batting_average: number;
 };
+
+export type StatReviewStatus = 'pending' | 'approved' | 'disputed';
+
+export type StatReview = {
+  match_id: number;
+  club_id: number;
+  status: StatReviewStatus;
+  submitted_by: number | null;
+  submitted_at: string;
+  reviewed_by: number | null;
+  reviewed_at: string | null;
+  review_note: string | null;
+};

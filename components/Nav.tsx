@@ -29,6 +29,7 @@ export function Nav({ lang, appUser }: { lang: Lang; appUser: AppUser | null }) 
     ['/players', translate('nav.players', lang)],
     ['/tournaments', translate('nav.tournaments', lang)],
     ['/standings', translate('nav.standings', lang)],
+    ['/rankings', translate('nav.rankings', lang)],
     ['/matches', translate('nav.matches', lang)],
     ['/news', translate('nav.news', lang)],
   ];
