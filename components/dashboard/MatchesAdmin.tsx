@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { SectionHead } from '@/components/dashboard/DashShell';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/Button';
@@ -90,6 +91,14 @@ export function MatchesAdmin({ matches, clubs, tournaments, reviews, lang }: { m
                   </td>
                   <td>
                     <div className="row" style={{ gap: 6, justifyContent: 'flex-end' }}>
+                      <Link
+                        href={`/dashboard/matches/${m.match_id}/scoresheet`}
+                        className="btn btn-ghost btn-icon"
+                        title={lang === 0 ? 'Scoresheet rasmi' : 'Official scoresheet'}
+                        aria-label={lang === 0 ? 'Scoresheet rasmi' : 'Official scoresheet'}
+                      >
+                        <I.sheet />
+                      </Link>
                       <button className="btn btn-ghost btn-icon" title={translate('stats.title', lang)} aria-label={translate('stats.title', lang)} onClick={() => setStats(m)}>
                         <I.chart />
                       </button>

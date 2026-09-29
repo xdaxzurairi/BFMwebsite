@@ -46,6 +46,9 @@ export const I = {
   clock: mkIcon(['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z', 'M12 7v5l3 2']),
   logout: mkIcon(['M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4', 'M16 17l5-5-5-5', 'M21 12H9']),
   menu: mkIcon(['M4 7h16', 'M4 12h16', 'M4 17h16']),
+  print: mkIcon(['M6 9V2h12v7', 'M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2', 'M6 14h12v8H6z']),
+  sheet: mkIcon(['M4 3h16v18H4z', 'M4 9h16', 'M4 15h16', 'M10 3v18']),
+  alert: mkIcon(['M12 9v4', 'M12 17h.01', 'M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z']),
   baseball: Baseball,
 };
 

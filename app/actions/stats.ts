@@ -63,11 +63,21 @@ export async function saveMatchStatsAction(matchId: number, lines: StatLine[]): 
   const active = new Set((players || []).map((p) => p.player_id));
   if (lines.some((l) => !active.has(l.player_id))) return { error: 'You can only enter stats for active players on your team.' };
 
-  const { data: old } = await supabase.from('player_match_stats').select('stat_id, player_id').eq('match_id', matchId);
-  const oldIds = (old || []).filter((r) => active.has(r.player_id)).map((r) => r.stat_id);
+  const { data: old } = await supabase.from('player_match_stats').select('*').eq('match_id', matchId);
+  const oldRows = ((old || []) as PlayerMatchStat[]).filter((r) => active.has(r.player_id));
+  const oldIds = oldRows.map((r) => r.stat_id);
+  // This form edits AB/H/R/RBI only; carry the rest of the official scoresheet columns over.
+  const replaced = new Set(['stat_id', 'created_at', 'at_bats', 'hits', 'runs', 'rbi']);
+  const kept = new Map(oldRows.map((r) => [r.player_id, Object.fromEntries(Object.entries(r).filter(([k]) => !replaced.has(k))) as Partial<PlayerMatchStat>]));
 
   if (lines.length) {
-    const { error } = await supabase.from('player_match_stats').insert(lines.map((l) => ({ ...l, match_id: matchId })));
+    const rows = lines.map((l) => {
+      const prev = kept.get(l.player_id);
+      // A lower hit total must not leave more extra-base hits than hits; clear them if it would.
+      const xbhOver = prev && (prev.doubles ?? 0) + (prev.triples ?? 0) + (prev.home_runs ?? 0) > l.hits;
+      return { ...prev, ...(xbhOver ? { doubles: 0, triples: 0, home_runs: 0 } : {}), ...l, match_id: matchId };
+    });
+    const { error } = await supabase.from('player_match_stats').insert(rows);
     if (error) return { error: error.message };
   }
   if (oldIds.length) {

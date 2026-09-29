@@ -129,20 +129,76 @@ export type Match = {
   status: MatchStatus;
   match_type: 'group' | 'semifinal' | 'final';
   round_name: string | null;
+  away_lob: number | null;
+  home_lob: number | null;
+  ended_at: string | null;
   created_at: string;
   updated_at: string;
 };
 
-export type PlayerMatchStat = {
+/* Batting, fielding and participation counts on one stat line (DakStats stat sheet columns). */
+export type BattingCounts = {
+  at_bats: number;
+  runs: number;
+  hits: number;
+  doubles: number;
+  triples: number;
+  home_runs: number;
+  rbi: number;
+  sac_hits: number;
+  sac_flies: number;
+  walks: number;
+  hit_by_pitch: number;
+  reached_on_error: number;
+  strikeouts_swinging: number;
+  strikeouts_looking: number;
+  stolen_bases: number;
+  caught_stealing: number;
+  putouts: number;
+  assists: number;
+  errors: number;
+  runners_caught_stealing: number;
+  stolen_bases_allowed: number;
+  passed_balls: number;
+};
+
+export type PlayerMatchStat = BattingCounts & {
   stat_id: number;
   player_id: number;
   match_id: number | null;
-  at_bats: number;
-  hits: number;
-  runs: number;
-  rbi: number;
+  started: boolean;
+  batting_order: number | null;
+  position_played: string | null;
   created_at: string;
 };
+
+export type PitchingDecision = 'win' | 'loss' | 'save';
+
+export type PitchingCounts = {
+  outs: number;
+  at_bats: number;
+  hits: number;
+  earned_runs: number;
+  unearned_runs: number;
+  walks: number;
+  strikeouts_swinging: number;
+  strikeouts_looking: number;
+  wild_pitches: number;
+  balks: number;
+};
+
+export type PitchingLine = PitchingCounts & {
+  pitch_id: number;
+  match_id: number;
+  player_id: number;
+  pitch_order: number;
+  started: boolean;
+  decision: PitchingDecision | null;
+  created_at: string;
+};
+
+/* Runs in one inning; null = half inning not played ("X"). */
+export type InningLine = { match_id: number; inning: number; away_runs: number | null; home_runs: number | null };
 
 export type News = {
   news_id: number;
