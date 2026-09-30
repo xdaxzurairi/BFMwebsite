@@ -5,15 +5,16 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Empty } from '@/components/ui/Empty';
 import { I } from '@/components/ui/icons';
 import { getLang } from '@/lib/lang';
-import { getMatch, getClub, getTournament, getMatchBoxScore, getHeadToHead, getStatReviews } from '@/lib/queries';
+import { LineScore } from '@/components/scoresheet/LineScore';
+import { ScoresheetView } from '@/components/scoresheet/ScoresheetView';
+import { getMatch, getClub, getTournament, getMatchBoxScore, getMatchPitching, getMatchInnings, getHeadToHead, getStatReviews } from '@/lib/queries';
 import { fmt } from '@/lib/format';
 import { statusLbl } from '@/lib/status';
-import { t as translate, type Lang } from '@/lib/i18n';
-import type { Club, Player, PlayerMatchStat } from '@/lib/types';
+import { lineTotals } from '@/lib/scoresheet';
+import { t as translate } from '@/lib/i18n';
+import type { Club } from '@/lib/types';
 
 export const revalidate = 60;
-
-type BoxRow = PlayerMatchStat & { player: Player };
 
 export default async function MatchCentrePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -21,17 +22,24 @@ export default async function MatchCentrePage({ params }: { params: Promise<{ id
   const match = await getMatch(Number(id));
   if (!match) notFound();
 
-  const [home, away, tournament, allBox, h2h, reviews] = await Promise.all([
+  const [home, away, tournament, allBox, allPitching, innings, h2h, reviews] = await Promise.all([
     getClub(match.home_team_id),
     getClub(match.away_team_id),
     getTournament(match.tournament_id),
     getMatchBoxScore(match.match_id),
+    getMatchPitching(match.match_id),
+    getMatchInnings(match.match_id),
     getHeadToHead(match.home_team_id, match.away_team_id),
     getStatReviews(match.match_id),
   ]);
   // Only stats the opposing club (or an admin) approved are shown publicly.
   const reviewOf = (clubId: number) => reviews.find((r) => r.club_id === clubId);
   const box = allBox.filter((r) => reviewOf(r.player.club_id)?.status === 'approved');
+  // Pitching lines are admin-entered; hide them only while that club's stats are under review.
+  const pitching = allPitching.filter((p) => {
+    const st = reviewOf(p.player.club_id)?.status;
+    return st !== 'pending' && st !== 'disputed';
+  });
   const unapproved = [away, home].flatMap((c) => {
     const r = c ? reviewOf(c.club_id) : undefined;
     return c && r && r.status !== 'approved' ? [{ club: c, status: r.status }] : [];
@@ -40,7 +48,10 @@ export default async function MatchCentrePage({ params }: { params: Promise<{ id
   const done = match.status === 'completed';
   const homeBox = box.filter((r) => r.player.club_id === match.home_team_id);
   const awayBox = box.filter((r) => r.player.club_id === match.away_team_id);
-  const hits = (rows: BoxRow[]) => rows.reduce((n, r) => n + r.hits, 0);
+  const homePitching = pitching.filter((p) => p.player.club_id === match.home_team_id);
+  const awayPitching = pitching.filter((p) => p.player.club_id === match.away_team_id);
+  const showLine = done || innings.length > 0;
+  const durationMin = match.ended_at ? Math.round((new Date(match.ended_at).getTime() - new Date(match.match_date).getTime()) / 60000) : null;
   const pastMeetings = h2h.filter((m) => m.match_id !== match.match_id);
   const winsFor = (clubId: number) =>
     pastMeetings.filter((m) => (m.home_team_id === clubId ? (m.home_score ?? 0) > (m.away_score ?? 0) : (m.away_score ?? 0) > (m.home_score ?? 0))).length;
@@ -70,7 +81,7 @@ export default async function MatchCentrePage({ params }: { params: Promise<{ id
 
   return (
     <div className="section wrap">
-      <Link href="/matches" className="btn btn-ghost btn-sm" style={{ marginBottom: 22 }}>
+      <Link href="/matches" className="btn btn-ghost btn-sm no-print" style={{ marginBottom: 22 }}>
         <I.arrowL />
         {translate('nav.matches', lang)}
       </Link>
@@ -100,7 +111,14 @@ export default async function MatchCentrePage({ params }: { params: Promise<{ id
           </div>
           {side(home, translate('mc.home', lang), match.home_score, done && (match.home_score ?? 0) > (match.away_score ?? 0))}
         </div>
-        <div className="row center wrap-w" style={{ gap: 22, justifyContent: 'center', marginTop: 30, color: 'oklch(1 0 0 / .75)', fontSize: 14 }}>
+        {showLine && (
+          <LineScore
+            innings={innings}
+            away={{ name: away?.club_name ?? '—', totals: lineTotals(match.away_score, awayBox, awayBox, match.away_lob) }}
+            home={{ name: home?.club_name ?? '—', totals: lineTotals(match.home_score, homeBox, homeBox, match.home_lob) }}
+          />
+        )}
+        <div className="ls-meta">
           <span className="row center" style={{ gap: 6 }}>
             <I.calendar style={{ width: 16, height: 16 }} />
             {fmt.time(match.match_date)}
@@ -111,36 +129,14 @@ export default async function MatchCentrePage({ params }: { params: Promise<{ id
               {match.venue}
             </span>
           )}
+          {durationMin != null && durationMin > 0 && (
+            <span className="row center" style={{ gap: 6 }}>
+              <I.clock style={{ width: 16, height: 16 }} />
+              {Math.floor(durationMin / 60)}:{String(durationMin % 60).padStart(2, '0')}
+            </span>
+          )}
         </div>
       </div>
-
-      {done && (
-        <div className="card" style={{ overflowX: 'auto', marginTop: 20 }}>
-          <table className="tbl">
-            <thead>
-              <tr>
-                <th>{translate('tbl.team', lang)}</th>
-                <th className="num">R</th>
-                <th className="num">H</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { club: away, score: match.away_score, rows: awayBox },
-                { club: home, score: match.home_score, rows: homeBox },
-              ].map((ln, i) => (
-                <tr key={i}>
-                  <td style={{ fontWeight: 700 }}>{ln.club?.club_name ?? '—'}</td>
-                  <td className="num" style={{ fontWeight: 800, fontSize: 16 }}>
-                    {ln.score}
-                  </td>
-                  <td className="num">{ln.rows.length ? hits(ln.rows) : '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
 
       <h2 className="h-md" style={{ margin: '40px 0 16px' }}>
         {translate('mc.box', lang)}
@@ -150,104 +146,46 @@ export default async function MatchCentrePage({ params }: { params: Promise<{ id
           <strong>{u.club.club_name}:</strong> {translate(u.status === 'disputed' ? 'review.mc.disputed' : 'review.mc.pending', lang)}
         </p>
       ))}
-      {box.length === 0 ? (
+      {(box.length === 0 && pitching.length === 0) || !home || !away ? (
         <Empty>{translate('mc.nobox', lang)}</Empty>
       ) : (
-        <div className="grid box-grid">
-          <BoxTable club={away} rows={awayBox} lang={lang} />
-          <BoxTable club={home} rows={homeBox} lang={lang} />
-        </div>
+        <ScoresheetView away={{ club: away, batting: awayBox, pitching: awayPitching }} home={{ club: home, batting: homeBox, pitching: homePitching }} lang={lang} />
       )}
 
-      <h2 className="h-md" style={{ margin: '40px 0 16px' }}>
-        {translate('mc.h2h', lang)}
-      </h2>
-      {pastMeetings.length === 0 ? (
-        <Empty>{translate('mc.noh2h', lang)}</Empty>
-      ) : (
-        <div className="card pad">
-          <div className="row between center" style={{ marginBottom: 16 }}>
-            <span style={{ fontWeight: 800 }}>
-              {home?.club_name} <span className="display" style={{ fontSize: 26, color: 'var(--field)' }}>{winsFor(match.home_team_id)}</span>
-            </span>
-            <span className="stat-label muted">
-              {pastMeetings.length} {translate('lbl.matches', lang)}
-            </span>
-            <span style={{ fontWeight: 800 }}>
-              <span className="display" style={{ fontSize: 26, color: 'var(--field)' }}>{winsFor(match.away_team_id)}</span> {away?.club_name}
-            </span>
+      <div className="no-print">
+        <h2 className="h-md" style={{ margin: '40px 0 16px' }}>
+          {translate('mc.h2h', lang)}
+        </h2>
+        {pastMeetings.length === 0 ? (
+          <Empty>{translate('mc.noh2h', lang)}</Empty>
+        ) : (
+          <div className="card pad">
+            <div className="row between center" style={{ marginBottom: 16 }}>
+              <span style={{ fontWeight: 800 }}>
+                {home?.club_name} <span className="display" style={{ fontSize: 26, color: 'var(--field)' }}>{winsFor(match.home_team_id)}</span>
+              </span>
+              <span className="stat-label muted">
+                {pastMeetings.length} {translate('lbl.matches', lang)}
+              </span>
+              <span style={{ fontWeight: 800 }}>
+                <span className="display" style={{ fontSize: 26, color: 'var(--field)' }}>{winsFor(match.away_team_id)}</span> {away?.club_name}
+              </span>
+            </div>
+            <div className="col" style={{ gap: 8 }}>
+              {pastMeetings.slice(0, 5).map((m) => (
+                <Link key={m.match_id} href={`/matches/${m.match_id}`} className="row between center h2h-row">
+                  <span className="muted" style={{ fontSize: 13 }}>
+                    {fmt.date(m.match_date, lang)}
+                  </span>
+                  <span style={{ fontWeight: 700 }}>
+                    {clubById.get(m.home_team_id)?.club_name} {m.home_score}–{m.away_score} {clubById.get(m.away_team_id)?.club_name}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="col" style={{ gap: 8 }}>
-            {pastMeetings.slice(0, 5).map((m) => (
-              <Link key={m.match_id} href={`/matches/${m.match_id}`} className="row between center h2h-row">
-                <span className="muted" style={{ fontSize: 13 }}>
-                  {fmt.date(m.match_date, lang)}
-                </span>
-                <span style={{ fontWeight: 700 }}>
-                  {clubById.get(m.home_team_id)?.club_name} {m.home_score}–{m.away_score} {clubById.get(m.away_team_id)?.club_name}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function BoxTable({ club, rows, lang }: { club: Club | null; rows: BoxRow[]; lang: Lang }) {
-  const sum = (k: 'at_bats' | 'hits' | 'runs' | 'rbi') => rows.reduce((n, r) => n + r[k], 0);
-  return (
-    <div className="card" style={{ overflowX: 'auto' }}>
-      <div className="row center" style={{ gap: 10, padding: '16px 16px 4px' }}>
-        {club && <ClubLogo club={club} size={28} />}
-        <span style={{ fontWeight: 800 }}>{club?.club_name ?? '—'}</span>
+        )}
       </div>
-      <table className="tbl">
-        <thead>
-          <tr>
-            <th>{lang === 0 ? 'Pemain' : 'Batter'}</th>
-            <th className="num">{translate('tbl.ab', lang)}</th>
-            <th className="num">{translate('tbl.r', lang)}</th>
-            <th className="num">{translate('tbl.h', lang)}</th>
-            <th className="num">RBI</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.stat_id}>
-              <td>
-                <Link href={`/players/${r.player.player_id}`} style={{ fontWeight: 700 }}>
-                  {r.player.first_name} {r.player.last_name}
-                </Link>{' '}
-                <span className="muted" style={{ fontSize: 12 }}>
-                  #{r.player.jersey_number} {r.player.position}
-                </span>
-              </td>
-              <td className="num">{r.at_bats}</td>
-              <td className="num">{r.runs}</td>
-              <td className="num">{r.hits}</td>
-              <td className="num">{r.rbi}</td>
-            </tr>
-          ))}
-          {rows.length > 0 && (
-            <tr style={{ background: 'var(--cream)' }}>
-              <td style={{ fontWeight: 800 }}>{lang === 0 ? 'Jumlah' : 'Totals'}</td>
-              <td className="num">{sum('at_bats')}</td>
-              <td className="num">{sum('runs')}</td>
-              <td className="num">{sum('hits')}</td>
-              <td className="num">{sum('rbi')}</td>
-            </tr>
-          )}
-          {rows.length === 0 && (
-            <tr>
-              <td colSpan={5} className="muted">
-                —
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
     </div>
   );
 }

@@ -573,3 +573,118 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; }
 .review-card { gap: 12px; flex-wrap: wrap; border-left: 4px solid var(--clay); }
 .linkish { background: none; border: 0; padding: 0; cursor: pointer; }
 .linkish:hover .badge { filter: brightness(.95); text-decoration: underline; }
+
+/* ============================================================
+   Scoresheet (DakStats stat sheet) — Match Centre + admin entry
+   ============================================================ */
+
+/* ---------- Line score (glass panel on the green hero) ---------- */
+.ls-wrap {
+  margin-top: 28px; overflow-x: auto; border-radius: var(--r);
+  background: oklch(1 0 0 / .06); border: 1px solid oklch(1 0 0 / .14);
+  backdrop-filter: blur(6px);
+}
+.ls { width: 100%; border-collapse: collapse; font-family: var(--mono); color: #fff; font-variant-numeric: tabular-nums; }
+.ls th { font-size: 11px; font-weight: 700; letter-spacing: .12em; color: oklch(1 0 0 / .55); padding: 10px 8px; text-align: center; }
+.ls td { padding: 11px 8px; text-align: center; font-size: 15px; font-weight: 700; border-top: 1px solid oklch(1 0 0 / .1); min-width: 30px; }
+.ls .ls-team { text-align: left; font-family: var(--sans); font-weight: 800; letter-spacing: 0; white-space: nowrap; padding-left: 16px; }
+.ls .ls-sep { border-left: 1px solid oklch(1 0 0 / .18); }
+.ls td.ls-r { font-family: var(--display); font-size: 24px; font-weight: 400; }
+.ls tbody tr td.ls-peak { color: var(--clay-bright); }
+.ls .ls-x { color: oklch(1 0 0 / .32); }
+.ls tr.ls-trail td { color: oklch(1 0 0 / .55); }
+.ls tr.ls-trail td.ls-team { color: oklch(1 0 0 / .7); }
+.ls-meta { display: flex; flex-wrap: wrap; gap: 8px 22px; justify-content: center; margin-top: 22px; color: oklch(1 0 0 / .75); font-size: 14px; }
+
+/* ---------- Public sheet ---------- */
+.ss-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.ss-toolbar .tabs { border-bottom: 0; }
+.seg { display: inline-flex; background: var(--sand); border-radius: 999px; padding: 3px; gap: 2px; }
+.seg button {
+  border: 0; background: transparent; padding: 7px 14px 7px 8px; border-radius: 999px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; color: var(--ink-soft);
+}
+.seg button.on { background: var(--paper); color: var(--ink); box-shadow: var(--shadow-sm); }
+
+.sheet-card { overflow: hidden; }
+.sheet-head { display: flex; align-items: center; gap: 10px; padding: 16px 18px 12px; }
+.sheet-head .stat-label { color: var(--clay-deep); }
+.sheet-scroll { overflow-x: auto; }
+.sheet-tbl { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.sheet-tbl th {
+  font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--ink-faint);
+  text-align: center; padding: 10px 8px; border-bottom: 1.5px solid var(--line); white-space: nowrap;
+}
+.sheet-tbl th abbr { text-decoration: none; cursor: help; }
+.sheet-tbl td { padding: 10px 8px; text-align: center; border-bottom: 1px solid var(--line-soft); font-weight: 700; white-space: nowrap; }
+.sheet-tbl td.z { color: var(--line); font-weight: 400; }
+.sheet-tbl .pl { text-align: left; position: sticky; left: 0; background: var(--paper); z-index: 1; min-width: 190px; }
+.sheet-tbl th.pl { background: var(--paper); }
+.sheet-tbl .bo { width: 34px; color: var(--ink-faint); font-family: var(--mono); font-size: 12px; }
+.sheet-tbl .pos { font-family: var(--mono); font-size: 11px; color: var(--clay-deep); margin-left: 6px; }
+.sheet-tbl .jn { color: var(--ink-faint); font-size: 12px; font-weight: 600; margin-left: 4px; }
+.sheet-tbl tr.sub .pl { padding-left: 26px; }
+.sheet-tbl tr.sub .pl::before { content: '↳'; color: var(--ink-faint); margin: 0 6px 0 -16px; }
+.sheet-tbl tbody tr:hover td { background: var(--cream); }
+.sheet-tbl tr.total td { background: var(--cream); font-weight: 800; border-bottom: 0; }
+.sheet-tbl .hl { color: var(--field); }
+.sheet-tbl .grp { border-left: 1.5px solid var(--line); }
+.sheet-notes { font-size: 13px; color: var(--ink-soft); padding: 12px 18px; border-top: 1px solid var(--line-soft); line-height: 1.7; }
+.sheet-notes b { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink); margin-right: 4px; }
+.sheet-notes span + span::before { content: '·'; margin: 0 8px; color: var(--ink-faint); }
+
+.dec { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .06em; padding: 2px 7px; border-radius: 999px; margin-left: 8px; vertical-align: 1px; }
+.dec-win { background: oklch(0.93 0.06 150); color: oklch(0.40 0.10 152); }
+.dec-loss { background: oklch(0.93 0.06 27); color: oklch(0.48 0.15 27); }
+.dec-save { background: oklch(0.92 0.05 235); color: oklch(0.42 0.10 235); }
+.dec-strip { display: flex; flex-wrap: wrap; gap: 8px 26px; padding: 14px 18px; background: var(--cream); font-size: 14px; }
+.dec-strip .stat-label { margin-right: 6px; color: var(--ink-faint); }
+
+/* Inactive team/tab panels are hidden on screen but all print. */
+.ss-hide { display: none; }
+
+/* ---------- Admin entry ---------- */
+.ss-balance { position: sticky; top: calc(var(--nav-h) + 8px); z-index: 6; margin-bottom: 18px; border-left: 4px solid var(--ok); }
+.ss-balance.has-bad { border-left-color: var(--bad); }
+.ss-balance ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 6px 18px; }
+.ss-balance li { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; line-height: 1.4; }
+.ss-balance li svg { width: 16px; height: 16px; flex: none; margin-top: 1px; }
+.ss-balance li.ok svg { color: var(--ok); }
+.ss-balance li.bad { color: var(--bad); font-weight: 700; }
+.ss-in {
+  width: 42px; padding: 6px 2px; text-align: center; font: inherit; font-weight: 700; font-variant-numeric: tabular-nums;
+  border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--paper); color: var(--ink);
+}
+.ss-in::placeholder { color: var(--line); font-weight: 400; }
+.ss-in:focus { outline: 2px solid var(--field-bright); outline-offset: 1px; border-color: transparent; }
+.ss-in.bad { border-color: var(--bad); color: var(--bad); background: oklch(0.97 0.03 27); }
+.ss-in.wide { width: 58px; }
+.ss-sel { padding: 6px 4px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--paper); font: inherit; font-size: 13px; font-weight: 700; }
+.sheet-tbl tr.off td:not(.pl):not(.chk) { opacity: .45; }
+.sheet-tbl td.chk { width: 34px; }
+.sheet-tbl td.chk input { width: 17px; height: 17px; accent-color: var(--field); }
+.ss-actions { position: sticky; bottom: 0; z-index: 6; display: flex; gap: 10px; align-items: center; justify-content: flex-end; padding: 14px 18px; margin-top: 22px; background: oklch(0.992 0.006 84 / .92); backdrop-filter: blur(8px); border-top: 1px solid var(--line); border-radius: var(--r) var(--r) 0 0; }
+
+@media (max-width: 760px) {
+  /* Keep team names visible while the innings scroll sideways. */
+  .ls .ls-team { position: sticky; left: 0; z-index: 1; background: var(--field-darker); }
+}
+@media (max-width: 560px) {
+  .sheet-tbl .pl { min-width: 140px; }
+  .ls td.ls-r { font-size: 20px; }
+}
+
+@media print {
+  @page { size: A4 landscape; margin: 10mm; }
+  body { background: #fff; }
+  .nav, footer, .no-print, .ss-toolbar { display: none !important; }
+  .ss-hide { display: block; }
+  .section.wrap { padding: 0 !important; max-width: none; }
+  .card { box-shadow: none !important; border: 1px solid #bbb !important; break-inside: avoid; margin-bottom: 8px; }
+  .match-hero { background: #fff !important; color: #000 !important; padding: 10px !important; }
+  .match-hero * { color: #000 !important; }
+  .ls-wrap { background: none; border: 1px solid #999; backdrop-filter: none; }
+  .ls .ls-team { background: #fff; }
+  .sheet-tbl th, .sheet-tbl td { padding: 4px 5px; font-size: 11px; }
+  .sheet-tbl td.z { color: #bbb; }
+}

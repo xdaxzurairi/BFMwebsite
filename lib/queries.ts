@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import type { Club, Player, Tournament, Match, News, StandingRow, PlayerStatRow, PlayerMatchStat, StatReview, Official, Registration, Payment, AppUserRow } from './types';
+import type { Club, Player, Tournament, Match, News, StandingRow, PlayerStatRow, PlayerMatchStat, PitchingLine, InningLine, StatReview, Official, Registration, Payment, AppUserRow } from './types';
 
 export async function getClubs() {
   const supabase = await createClient();
@@ -158,6 +158,28 @@ export async function getMatchBoxScore(matchId: number) {
     const player = byId.get(r.player_id);
     return player ? [{ ...r, player }] : [];
   });
+}
+
+export async function getMatchPitching(matchId: number) {
+  const supabase = await createClient();
+  const { data: lines } = await supabase.from('match_pitching_stats').select('*').eq('match_id', matchId).order('pitch_order');
+  const rows = (lines || []) as PitchingLine[];
+  if (!rows.length) return [];
+  const { data: players } = await supabase
+    .from('players')
+    .select('*')
+    .in('player_id', rows.map((r) => r.player_id));
+  const byId = new Map(((players || []) as Player[]).map((p) => [p.player_id, p]));
+  return rows.flatMap((r) => {
+    const player = byId.get(r.player_id);
+    return player ? [{ ...r, player }] : [];
+  });
+}
+
+export async function getMatchInnings(matchId: number) {
+  const supabase = await createClient();
+  const { data } = await supabase.from('match_innings').select('*').eq('match_id', matchId).order('inning');
+  return (data || []) as InningLine[];
 }
 
 export async function getHeadToHead(clubA: number, clubB: number) {
